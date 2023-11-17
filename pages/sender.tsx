@@ -2,15 +2,16 @@ import Image from 'next/image'
 import { Albert_Sans } from 'next/font/google'
 import clsx from 'clsx'
 import Arrow from '@/components/Arrow'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-
+import { dataSwapContract } from "@/contracts/dataSwapContract";
 import { Tag } from '@/type'
 import Layout from '@/components/Layout'
 import { Autocomplete, Box, Button, Checkbox, Chip, CircularProgress, FormControlLabel, InputAdornment, MenuItem, OutlinedInput, Select, TextField, Typography } from '@mui/material'
 import { type } from 'os'
 import { useRouter } from 'next/router'
 import { useForm, Controller } from 'react-hook-form'
+import { useAccount, useContractReads } from 'wagmi'
 
 const inter = Albert_Sans({ subsets: ['latin'] })
 
@@ -32,6 +33,18 @@ function Label({ required, value }: { required: boolean, value: string }) {
 }
 
 export default function Sender() {
+  const { address } = useAccount()
+  const ids = [7074046504243040256, 7086575438692093952, 7093087508845563904, 7098147946901803008]
+  const { data, isError, isLoading } = useContractReads({
+    contracts: ids.map((id, index) => {
+      return {
+        ...dataSwapContract as any,
+        functionName: 'buyRecords',
+        args: [address, id],
+      }
+    })
+
+  })
   const {
     handleSubmit,
     control,
@@ -56,6 +69,14 @@ export default function Sender() {
     { id: '2', name: 'Tag2', total: 102 },
     { id: '3', name: 'Tag3', total: 103 },
   ]);
+  useEffect(() => {
+    if (data) {
+      const temp = data?.map((item, index) => {
+        return { id: ids[index], balance: data[index].result, name: `Tag ${index + 1}`, total: 13 }
+      })
+      setOptions(temp as any)
+    }
+  }, [data])
   const loading = open && options.length === 0;
   return (
     <Layout>
@@ -173,7 +194,7 @@ export default function Sender() {
                             return option.name === kvalue.name;
                           }}
                           getOptionLabel={(option) => {
-                            return option.name;
+                            return 'For ' + option.name + ' users You have ' + option?.balance + ' times mail send access';
                           }}
                           onChange={(e, value) => {
                             onChange(value?.id);
