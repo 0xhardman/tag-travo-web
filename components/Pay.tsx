@@ -8,7 +8,6 @@ export default function Pay({ pay, setPay }: { pay: string, setPay: Dispatch<Set
     const { data } = useBalance({
         address: address,
     })
-    console.log(pay)
     return <div className={clsx('flex flex-col',
         'h-[12opx] p-[16px]',
         'bg-[#f9f9f9] rounded-[16px]',
@@ -32,7 +31,6 @@ export default function Pay({ pay, setPay }: { pay: string, setPay: Dispatch<Set
             <div className='flex gap-2 justify-end'>
                 <div>Balance: {data?.formatted}</div>
                 <div onClick={() => {
-                    console.log(data)
                     setPay(data?.formatted || '0')
                 }} className='text-[#1f7f94] font-semibold cursor-pointer'>Max</div>
             </div>

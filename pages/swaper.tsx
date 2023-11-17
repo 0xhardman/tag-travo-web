@@ -15,7 +15,7 @@ const inter = Albert_Sans({ subsets: ['latin'] })
 export default function Swaper() {
   const [pay, setPay] = useState('0')
   const [tag, setTag] = useState<Tag>({
-    id: '',
+    id: 0,
     tag: '',
     description: 'Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt',
     count: 1,
@@ -36,7 +36,7 @@ export default function Swaper() {
           </div>
           <Receive tag={tag} setTag={setTag} payUSD={Number(pay)} />
           <Tip tag={tag} />
-          <div className='w-full rounded-[18px] bg-[#1f7f94] text-[20px] text-white h-[58px] flex justify-center items-center'>
+          <div onClick={()=>{}} className='w-full cursor-pointer rounded-[18px] bg-[#1f7f94] text-[20px] text-white h-[58px] flex justify-center items-center'>
             Swap
           </div>
         </div>
