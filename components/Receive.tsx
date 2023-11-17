@@ -6,13 +6,12 @@ import { Tag } from "@/type";
 import { useContractReads, erc20ABI } from 'wagmi'
 import { dataSwapContract } from "@/contracts/dataSwapContract";
 import { formatEther } from "viem";
-import { error } from "console";
 
 
 export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag, setTag: React.Dispatch<React.SetStateAction<Tag>> }) {
     const [open, setOpen] = useState(false)
     const [rows, setRows] = useState<Tag[]>([])
-    // const [tag, setTag] = useState<Tag>()
+
     const handleClose = () => {
         setOpen(false)
     }
@@ -142,7 +141,7 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
 
                 </div>
                 <div className='flex gap-2 justify-end'>
-                    <div>Total: {tag?.count}</div>
+                    <div>Total: {tag?.count} User Data</div>
                 </div>
             </div>
         </div>

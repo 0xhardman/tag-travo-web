@@ -25,7 +25,7 @@ export default function Pay({ pay, setPay }: { pay: string, setPay: Dispatch<Set
             }} /></div>
             <div className='px-[4px] flex justify-start items-center shadow-md border border-[#22222222] gap-2 w-[107px] h-[34px] bg-white rounded-full'>
                 <img src="/bnb.svg" alt="" />
-                <span className='text-[18px] font-semibold text-black'>BNB</span>
+                <span className='text-[18px] font-semibold text-black'>tBNB</span>
             </div>
         </div>
         <div className='flex gap-2 justify-between'>
