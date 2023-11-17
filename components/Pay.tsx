@@ -34,7 +34,7 @@ export default function Pay({ }) {
                 <div onClick={() => {
                     console.log(data)
                     setPay(data?.formatted || '0')
-                }} className='text-[##1f7f94] font-semibold'>Max</div>
+                }} className='text-[#1f7f94] font-semibold cursor-pointer'>Max</div>
             </div>
         </div>
     </div>
