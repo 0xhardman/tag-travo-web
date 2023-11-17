@@ -5,10 +5,19 @@ import Arrow from '@/components/Arrow'
 import { useState } from 'react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import Pay from '@/components/Pay'
+import Receive from '@/components/Receive'
+import { Tag } from '@/type'
 
 const inter = Albert_Sans({ subsets: ['latin'] })
 
 export default function Home() {
+  const [pay, setPay] = useState('0')
+  const [tag, setTag] = useState<Tag>({
+    tag: '',
+    description: 'Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt',
+    count: 1,
+    price: 0.01,
+  })
   return (
     <div className=''>
       <div className='flex justify-between items-center w-screen h-[70px] border-b px-[20px]'>
@@ -33,48 +42,25 @@ export default function Home() {
           'w-[462px]  px-[8px] py-[12px]',
           'bg-white border-[#22222243] border rounded-[24px]',
           'text-[#7c7c7c]')}>
-          <Pay />
+          <Pay pay={pay} setPay={setPay} />
           <div className='left-[200px] top-[120px] rounded-xl absolute flex justify-center items-center box-content bg-[#f9f9f9] border-[4px] border-white w-[32px] h-[32px]'>
             <img src="/down-arrow.svg" alt="" />
           </div>
-          <div className={clsx('flex flex-col',
-            'h-[12opx] p-[16px]',
-            'bg-[#f9f9f9] rounded-[16px]',
-            'text-[14px] text-[#7c7c7c]'
-          )}>
-            <div>You Receive</div>
-            <div className='flex justify-between items-center'>
-              <div className='text-[36px]'>0</div>
-              <div className='px-[12px] flex justify-start items-center shadow-md bg-[#1f7f94] text-white gap-1  h-[34px] rounded-full text-[20px]'>
-                Select Tag
-                <Arrow color="white" />
-              </div>
-
-            </div>
-            <div className='flex gap-2 justify-between'>
-              <div className='flex gap-2 justify-end'>
-                $ 123
-              </div>
-              <div className='flex gap-2 justify-end'>
-                <div>Balance: 0.2123</div>
-              </div>
-            </div>
-          </div>
-          <div className={clsx('flex justify-between',
+          <Receive tag={tag} setTag={setTag} payUSD={Number(pay)} />
+          <div className={clsx('flex justify-center',
             'h-[50px] p-[16px]',
             'bg-white rounded-[16px] border border-[#22222213]',
             'text-[14px] text-[#7c7c7c]'
           )}>
             <div className='text-black'>
-              1 USDT=0.00048 BNB
-              <span className='text-[#7c7c7c]'>($1.00)</span>
+              1 BNB = {(1 / tag.price).toFixed(0)} <span className='border bg-[#008093] p-[4px] rounded-lg text-white'>{tag?.tag}</span>
+              <span className='text-[#7c7c7c]'></span>
             </div>
-            <div className='flex items-center'>
+            {/* <div className='flex items-center'>
               <img className='w-[18px] mr-[4px] opacity-40 ' src="/gas.svg" alt="" />
               <div>$0.23</div>
               <Arrow color="#cecece" />
-              {/* <img className='w-[24px] mr-[4px]' src="/arrow.svg" alt="" /> */}
-            </div>
+            </div> */}
           </div>
           <div className='w-full rounded-[18px] bg-[#1f7f94] text-[20px] text-white h-[58px] flex justify-center items-center'>
             Swap

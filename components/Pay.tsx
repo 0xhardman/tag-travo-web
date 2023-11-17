@@ -1,9 +1,9 @@
 import clsx from "clsx"
-import { useState } from "react"
+import { Dispatch, useState, SetStateAction } from "react"
 import { useAccount, useBalance, useEnsAddress } from "wagmi"
 
-export default function Pay({ }) {
-    const [pay, setPay] = useState('0')
+export default function Pay({ pay, setPay }: { pay: string, setPay: Dispatch<SetStateAction<string>> }) {
+    // const [pay, setPay] = useState('0')
     const { address } = useAccount()
     const { data } = useBalance({
         address: address,
