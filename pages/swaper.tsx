@@ -12,7 +12,7 @@ import Tip from '@/components/Tip'
 
 const inter = Albert_Sans({ subsets: ['latin'] })
 
-export default function Home() {
+export default function Swaper() {
   const [pay, setPay] = useState('0')
   const [tag, setTag] = useState<Tag>({
     tag: '',
