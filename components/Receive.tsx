@@ -47,7 +47,7 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
                                 <TableCell align="center">Tag</TableCell>
                                 <TableCell align="center">Description</TableCell>
                                 <TableCell align="center">Count</TableCell>
-                                <TableCell align="center">Price<br />(BNB/record)</TableCell>
+                                <TableCell align="center">Price<br />(BNB/Mail)</TableCell>
                                 <TableCell align="center">Action</TableCell>
                             </TableRow>
                         </TableHead>

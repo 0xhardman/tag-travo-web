@@ -7,6 +7,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import Pay from '@/components/Pay'
 import Receive from '@/components/Receive'
 import { Tag } from '@/type'
+import Layout from '@/components/Layout'
 
 const inter = Albert_Sans({ subsets: ['latin'] })
 
@@ -19,22 +20,7 @@ export default function Home() {
     price: 0.01,
   })
   return (
-    <div className=''>
-      <div className='flex justify-between items-center w-screen h-[70px] border-b px-[20px]'>
-        <div className='flex gap-4 items-center'>
-          <div className='flex gap-2'>
-            <img className='w-[30px]' src="/logo-short.svg" alt="" />
-            <div className='text-[20px] text-[#008192] font-bold'>Data2Swap</div>
-          </div>
-        </div>
-        <div className='flex justify-spacing items-center gap-8 text-[#7d7d7d]'>
-          <div>Intro</div>
-          <div>Swaper</div>
-          <div>Sender</div>
-        </div>
-        <ConnectButton showBalance={false} chainStatus="icon" />
-        {/* <div className='w-[120px]'></div> */}
-      </div>
+    <Layout>
       <main
         className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className} bg-[#fffeff]`}
       >
@@ -53,8 +39,7 @@ export default function Home() {
             'text-[14px] text-[#7c7c7c]'
           )}>
             <div className='text-black'>
-              1 BNB = {(1 / tag.price).toFixed(0)} <span className='border bg-[#008093] p-[4px] rounded-lg text-white'>{tag?.tag}</span>
-              <span className='text-[#7c7c7c]'></span>
+              1 BNB can send {tag.count} users with <span className='border bg-[#008093] p-[4px] rounded-lg text-white'>{tag?.tag}</span> {(1 / tag.price).toFixed(0)} times mails.
             </div>
             {/* <div className='flex items-center'>
               <img className='w-[18px] mr-[4px] opacity-40 ' src="/gas.svg" alt="" />
@@ -66,8 +51,7 @@ export default function Home() {
             Swap
           </div>
         </div>
-
       </main>
-    </div>
+    </Layout>
   )
 }
