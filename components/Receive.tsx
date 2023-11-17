@@ -58,9 +58,6 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
         })
         setRows(temp as Tag[])
     }, [data])
-
-    console.log(rows)
-
     return <>
         <Dialog
             open={open}
@@ -69,7 +66,7 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
             aria-describedby="alert-dialog-description"
         >
             <DialogTitle id="alert-dialog-title">
-                What Tag Do You Want To Receive?
+                Hi! May I ask where we can upload the materials?
             </DialogTitle>
             <DialogContent>
                 <TableContainer component={Paper}>

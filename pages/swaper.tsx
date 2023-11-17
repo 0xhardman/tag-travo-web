@@ -1,4 +1,4 @@
-import Image from 'next/image'
+"use client";
 import { Albert_Sans } from 'next/font/google'
 import clsx from 'clsx'
 import { useState } from 'react'
