@@ -11,7 +11,7 @@ import { Autocomplete, Box, Button, Checkbox, Chip, CircularProgress, FormContro
 import { type } from 'os'
 import { useRouter } from 'next/router'
 import { useForm, Controller } from 'react-hook-form'
-import { useAccount, useContractReads } from 'wagmi'
+import { useAccount, useContractReads, useContractWrite } from 'wagmi'
 
 const inter = Albert_Sans({ subsets: ['latin'] })
 
@@ -34,6 +34,10 @@ function Label({ required, value }: { required: boolean, value: string }) {
 
 export default function Sender() {
   const { address } = useAccount()
+  const { data: writeData, isLoading: isWriteLoading, isSuccess, writeAsync } = useContractWrite({
+    ...dataSwapContract as any,
+    functionName: 'send',
+  })
   const ids = [7074046504243040256, 7086575438692093952, 7093087508845563904, 7098147946901803008]
   const { data, isError, isLoading } = useContractReads({
     contracts: ids.map((id, index) => {
@@ -243,7 +247,11 @@ export default function Sender() {
           </Box>
           <div onClick={handleSubmit(
             (data) => {
-              console.log(data)
+              writeAsync(
+                {
+                  args: [data.tag, data.title, data.content],
+                }
+              )
             }
           )} className='cursor-pointer self-end w-[140px] rounded-[18px] bg-[#1f7f94] text-[20px] text-white h-[58px] flex justify-center items-center'>
             Swap
