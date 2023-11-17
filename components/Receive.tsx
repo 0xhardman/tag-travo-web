@@ -28,30 +28,39 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
         return { id, tag, description, count, price };
     }
     const ids = [7074046504243040256, 7086575438692093952, 7093087508845563904, 7098147946901803008]
+    const tags = [{
+        id: 7074046504243040256,
+        tag: 'Uniswap master',
+        description: 'Interacted with Uniswap protocol for more than 10 times before 1st Nov.',
+        count: 111234,
+    },
+    {
+        id: 7086575438692093952,
+        tag: 'DeFi follower on X',
+        description: 'Linked at least 1 post about opBNB before 1st Nov.',
+        count: 2507,
+    },
+    {
+        id: 7093087508845563904,
+        tag: 'opBNB player',
+        description: 'Hold at least 1 BNB on opBNB chain before 1st Nov.',
+        count: 712401,
+    }, {
+        id: 7098147946901803008,
+        tag: 'Uniswap Discord Member',
+        description: 'Being a member of Uniswap discord before 1st Nov.',
+        count: 123408,
+    }]
     const { data, isError, isLoading, error } = useContractReads({
-        contracts: [
-            {
+        contracts: tags.map((item) => {
+            return {
                 ...dataSwapContract as any,
                 functionName: 'tagPrices',
-                args: [ids[0]],
-            },
-            {
-                ...dataSwapContract as any,
-                functionName: 'tagPrices',
-                args: [ids[1]],
-            },
-            {
-                ...dataSwapContract as any,
-                functionName: 'tagPrices',
-                args: [ids[2]],
-            },
-            {
-                ...dataSwapContract as any,
-                functionName: 'tagPrices',
-                args: [ids[3]],
+                args: [item.id],
             }
-        ],
+        })
     })
+
     useEffect(() => {
         if (isError) {
             console.log(error)
@@ -63,7 +72,7 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
             return
         }
         const temp = data?.map((item, index) => {
-            return createData(ids[index], `Tag ${index + 1}`, "Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt", 12, Number(formatEther(item?.result as any || 0)))
+            return createData(tags[index].id, tags[index].tag, tags[index].description, tags[index].count, Number(formatEther(item?.result as any || 0)))
         })
         setRows(temp as Tag[])
     }, [data, isError])

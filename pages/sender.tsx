@@ -69,10 +69,33 @@ export default function Sender() {
   const [disabletSubmitBtn, setDisableSubmitBtn] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [options, setOptions] = useState<Tag[]>([]);
+  const tags = [{
+    id: 7074046504243040256,
+    tag: 'Uniswap master',
+    description: 'Interacted with Uniswap protocol for more than 10 times before 1st Nov.',
+    count: 111234,
+  },
+  {
+    id: 7086575438692093952,
+    tag: 'DeFi follower on X',
+    description: 'Linked at least 1 post about opBNB before 1st Nov.',
+    count: 2507,
+  },
+  {
+    id: 7093087508845563904,
+    tag: 'opBNB player',
+    description: 'Hold at least 1 BNB on opBNB chain before 1st Nov.',
+    count: 712401,
+  }, {
+    id: 7098147946901803008,
+    tag: 'Uniswap Discord Member',
+    description: 'Being a member of Uniswap discord before 1st Nov.',
+    count: 123408,
+  }]
   useEffect(() => {
     if (data) {
       const temp = data?.map((item, index) => {
-        return { id: ids[index], balance: data[index].result, name: `Tag ${index + 1}`, total: 13 }
+        return { id: ids[index], balance: data[index].result, tag: tags[index].tag, total: tags[index].count }
       })
       setOptions(temp as any)
     }
