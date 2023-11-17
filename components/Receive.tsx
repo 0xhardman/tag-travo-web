@@ -53,7 +53,7 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
         ],
     })
     useEffect(() => {
-        if (data) {
+        if (data?.length > 0) {
             console.log(data)
         } else {
             return
