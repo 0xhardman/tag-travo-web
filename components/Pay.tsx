@@ -1,13 +1,17 @@
 import clsx from "clsx"
-import { Dispatch, useState, SetStateAction } from "react"
+import { Dispatch, useState, SetStateAction, useEffect, use } from "react"
 import { useAccount, useBalance, useEnsAddress } from "wagmi"
 
 export default function Pay({ pay, setPay }: { pay: string, setPay: Dispatch<SetStateAction<string>> }) {
     // const [pay, setPay] = useState('0')
     const { address } = useAccount()
+    const [balance, setBalance] = useState('0')
     const { data } = useBalance({
         address: address,
     })
+    useEffect(() => {
+        setBalance(data?.formatted || '0')
+    }, [data])
     return <div className={clsx('flex flex-col',
         'h-[12opx] p-[16px]',
         'bg-[#f9f9f9] rounded-[16px]',
@@ -29,7 +33,7 @@ export default function Pay({ pay, setPay }: { pay: string, setPay: Dispatch<Set
                 $ {(Number(pay) * 252).toFixed(4)}
             </div>
             <div className='flex gap-2 justify-end'>
-                <div>Balance: {data?.formatted}</div>
+                <div>Balance: {balance}</div>
                 <div onClick={() => {
                     setPay(data?.formatted || '0')
                 }} className='text-[#1f7f94] font-semibold cursor-pointer'>Max</div>

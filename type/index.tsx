@@ -4,5 +4,6 @@ export interface Tag {
     description: string,
     count: number,
     price: number,
+    balance?: number,
 }
 

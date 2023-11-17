@@ -68,11 +68,7 @@ export default function Sender() {
   const [open, setOpen] = useState(false);
   const [disabletSubmitBtn, setDisableSubmitBtn] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
-  const [options, setOptions] = useState([
-    { id: '1', name: 'Tag1', total: 101 },
-    { id: '2', name: 'Tag2', total: 102 },
-    { id: '3', name: 'Tag3', total: 103 },
-  ]);
+  const [options, setOptions] = useState<Tag[]>([]);
   useEffect(() => {
     if (data) {
       const temp = data?.map((item, index) => {
@@ -195,10 +191,10 @@ export default function Sender() {
                             setOpen(false);
                           }}
                           isOptionEqualToValue={(option, kvalue) => {
-                            return option.name === kvalue.name;
+                            return option.tag === kvalue.tag;
                           }}
                           getOptionLabel={(option) => {
-                            return 'For ' + option.name + ' users You have ' + option?.balance + ' times mail send access';
+                            return 'For ' + option.tag + ' users You have ' + option?.balance + ' times mail send access';
                           }}
                           onChange={(e, value) => {
                             onChange(value?.id);
