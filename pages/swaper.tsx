@@ -1,14 +1,15 @@
 import Image from 'next/image'
 import { Albert_Sans } from 'next/font/google'
 import clsx from 'clsx'
-import Arrow from '@/components/Arrow'
 import { useState } from 'react'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { useContractWrite } from 'wagmi'
 import Pay from '@/components/Pay'
 import Receive from '@/components/Receive'
 import { Tag } from '@/type'
 import Layout from '@/components/Layout'
 import Tip from '@/components/Tip'
+import { dataSwapContract } from "@/contracts/dataSwapContract";
+import { parseEther } from 'viem'
 
 const inter = Albert_Sans({ subsets: ['latin'] })
 
@@ -20,6 +21,10 @@ export default function Swaper() {
     description: 'Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt',
     count: 1,
     price: 0.01,
+  })
+  const { data, isLoading, isSuccess, writeAsync } = useContractWrite({
+    ...dataSwapContract as any,
+    functionName: 'buy',
   })
   return (
     <Layout>
@@ -36,7 +41,13 @@ export default function Swaper() {
           </div>
           <Receive tag={tag} setTag={setTag} payUSD={Number(pay)} />
           <Tip tag={tag} />
-          <div onClick={()=>{}} className='w-full cursor-pointer rounded-[18px] bg-[#1f7f94] text-[20px] text-white h-[58px] flex justify-center items-center'>
+          <div onClick={() => {
+            console.log(tag)
+            writeAsync({
+              value: parseEther(pay),
+              args: [tag.id],
+            })
+          }} className='w-full cursor-pointer rounded-[18px] bg-[#1f7f94] text-[20px] text-white h-[58px] flex justify-center items-center'>
             Swap
           </div>
         </div>

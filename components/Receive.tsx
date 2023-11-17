@@ -4,13 +4,9 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogTitle, DialogContent, Paper, DialogContentText, DialogActions, Button, TableContainer, Table, TableHead, TableCell, TableRow, TableBody } from "@mui/material";
 import { Tag } from "@/type";
 import { useContractReads, erc20ABI } from 'wagmi'
-import DataSwapABI from '@/abi/DataSwapABI.json'
+import { dataSwapContract } from "@/contracts/dataSwapContract";
 import { formatEther } from "viem";
 
-const dataSwapContract = {
-    address: '0xBD9b0EB1243F05253B832a30Fdf6d941cdF3440E',
-    abi: DataSwapABI,
-}
 
 export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag, setTag: React.Dispatch<React.SetStateAction<Tag>> }) {
     const [open, setOpen] = useState(false)
@@ -29,7 +25,7 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
         count: number,
         price: number,
     ) {
-        return { tag, description, count, price };
+        return { id, tag, description, count, price };
     }
     const ids = [7074046504243040256, 7086575438692093952, 7093087508845563904, 7098147946901803008]
     const { data, isError, isLoading } = useContractReads({
@@ -57,12 +53,13 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
         ],
     })
     useEffect(() => {
-
         const temp = data?.map((item, index) => {
             return createData(ids[index], `Tag ${index + 1}`, "Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt", 12, Number(formatEther(item.result as any)))
         })
         setRows(temp as Tag[])
     }, [data])
+
+    console.log(rows)
 
     return <>
         <Dialog
