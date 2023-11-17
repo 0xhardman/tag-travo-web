@@ -20,18 +20,18 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
 export const bnbTest = {
-  id: 5_600,
-  name: 'BNB Testnet',
-  network: 'bnb-testnet',
+  id: 97,
+  name: 'BSC Testnet',
+  network: 'bsc-testnet',
   iconUrl: "/bnb.svg",
   nativeCurrency: {
     decimals: 18,
-    name: 'BNB',
-    symbol: 'BNB',
+    name: 'tBNB',
+    symbol: 'tBNB',
   },
   rpcUrls: {
-    public: { http: ['https://gnfd-testnet-fullnode-tendermint-us.bnbchain.org'] },
-    default: { http: ['https://gnfd-testnet-fullnode-tendermint-us.bnbchain.org'] },
+    public: { http: ['https://data-seed-prebsc-1-s1.bnbchain.org:8545'] },
+    default: { http: ['https://data-seed-prebsc-1-s1.bnbchain.org:8545'] },
   },
   blockExplorers: {
     etherscan: { name: 'SnowTrace', url: 'https://snowtrace.io' },

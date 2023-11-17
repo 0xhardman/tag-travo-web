@@ -1,12 +1,20 @@
 import clsx from "clsx";
 import Arrow from "./Arrow";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogTitle, DialogContent, Paper, DialogContentText, DialogActions, Button, TableContainer, Table, TableHead, TableCell, TableRow, TableBody } from "@mui/material";
 import { Tag } from "@/type";
+import { useContractReads, erc20ABI } from 'wagmi'
+import DataSwapABI from '@/abi/DataSwapABI.json'
+import { formatEther } from "viem";
 
+const dataSwapContract = {
+    address: '0xBD9b0EB1243F05253B832a30Fdf6d941cdF3440E',
+    abi: DataSwapABI,
+}
 
 export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag, setTag: React.Dispatch<React.SetStateAction<Tag>> }) {
     const [open, setOpen] = useState(false)
+    const [rows, setRows] = useState<Tag[]>([])
     // const [tag, setTag] = useState<Tag>()
     const handleClose = () => {
         setOpen(false)
@@ -22,13 +30,39 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
     ) {
         return { tag, description, count, price };
     }
-    const rows = [
-        createData('Tag 1', "Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt", 1, 0.011),
-        createData('Tag 2', "Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt", 12, 0.012),
-        createData('Tag 3', "Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt", 13, 0.013),
-        createData('Tag 4', "Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt", 14, 0.014),
-    ];
-    console.log(tag)
+    const { data, isError, isLoading } = useContractReads({
+        contracts: [
+            {
+                ...dataSwapContract as any,
+                functionName: 'tagPrices',
+                args: [7074046504243040256],
+            },
+            {
+                ...dataSwapContract as any,
+                functionName: 'tagPrices',
+                args: [7086575438692093952],
+            },
+            {
+                ...dataSwapContract as any,
+                functionName: 'tagPrices',
+                args: [7093087508845563904],
+            },
+            {
+                ...dataSwapContract as any,
+                functionName: 'tagPrices',
+                args: [7098147946901803008],
+            }
+        ],
+    })
+    useEffect(() => {
+        console.log(data)
+        const temp = data?.map((item, index) => {
+            return createData(`Tag ${index + 1}`, "Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt", 12, Number(formatEther(item.result as bigint)))
+        })
+        setRows(temp as Tag[])
+    }, [data])
+    console.log({ data, isError, isLoading, DataSwapABI })
+    console.log(rows)
     return <>
         <Dialog
             open={open}
