@@ -23,6 +23,7 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
         setOpen(true)
     }
     function createData(
+        id: number,
         tag: string,
         description: string,
         count: number,
@@ -30,39 +31,39 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
     ) {
         return { tag, description, count, price };
     }
+    const ids = [7074046504243040256, 7086575438692093952, 7093087508845563904, 7098147946901803008]
     const { data, isError, isLoading } = useContractReads({
         contracts: [
             {
                 ...dataSwapContract as any,
                 functionName: 'tagPrices',
-                args: [7074046504243040256],
+                args: [ids[0]],
             },
             {
                 ...dataSwapContract as any,
                 functionName: 'tagPrices',
-                args: [7086575438692093952],
+                args: [ids[1]],
             },
             {
                 ...dataSwapContract as any,
                 functionName: 'tagPrices',
-                args: [7093087508845563904],
+                args: [ids[2]],
             },
             {
                 ...dataSwapContract as any,
                 functionName: 'tagPrices',
-                args: [7098147946901803008],
+                args: [ids[3]],
             }
         ],
     })
     useEffect(() => {
         console.log(data)
         const temp = data?.map((item, index) => {
-            return createData(`Tag ${index + 1}`, "Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt", 12, Number(formatEther(item.result as bigint)))
+            return createData(ids[index], `Tag ${index + 1}`, "Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt", 12, Number(formatEther(item.result as bigint)))
         })
         setRows(temp as Tag[])
     }, [data])
-    console.log({ data, isError, isLoading, DataSwapABI })
-    console.log(rows)
+
     return <>
         <Dialog
             open={open}

@@ -15,6 +15,7 @@ const inter = Albert_Sans({ subsets: ['latin'] })
 export default function Home() {
   const [pay, setPay] = useState('0')
   const [tag, setTag] = useState<Tag>({
+    id: '',
     tag: '',
     description: 'Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt',
     count: 1,
