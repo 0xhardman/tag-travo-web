@@ -6,6 +6,7 @@ import { Tag } from "@/type";
 import { useContractReads, erc20ABI } from 'wagmi'
 import { dataSwapContract } from "@/contracts/dataSwapContract";
 import { formatEther } from "viem";
+import { error } from "console";
 
 
 export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag, setTag: React.Dispatch<React.SetStateAction<Tag>> }) {
@@ -28,7 +29,7 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
         return { id, tag, description, count, price };
     }
     const ids = [7074046504243040256, 7086575438692093952, 7093087508845563904, 7098147946901803008]
-    const { data, isError, isLoading } = useContractReads({
+    const { data, isError, isLoading, error } = useContractReads({
         contracts: [
             {
                 ...dataSwapContract as any,
@@ -53,16 +54,20 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
         ],
     })
     useEffect(() => {
+        if (isError) {
+            console.log(error)
+            return
+        }
         if (data?.length || 0 > 0) {
             console.log(data)
         } else {
             return
         }
         const temp = data?.map((item, index) => {
-            return createData(ids[index], `Tag ${index + 1}`, "Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt", 12, Number(formatEther(item.result as any)))
+            return createData(ids[index], `Tag ${index + 1}`, "Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt", 12, Number(formatEther(item?.result as any || 0)))
         })
         setRows(temp as Tag[])
-    }, [data])
+    }, [data, isError])
     return <>
         <Dialog
             open={open}
