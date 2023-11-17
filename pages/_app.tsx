@@ -40,7 +40,7 @@ export const bnbTest = {
 }
 
 const { chains, publicClient } = configureChains(
-  [mainnet, bsc, bnbTest],
+  [bnbTest],
   [
     // alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
     publicProvider()
