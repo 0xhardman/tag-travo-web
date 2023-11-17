@@ -23,7 +23,7 @@ export default function Home() {
   return (
     <Layout>
       <main
-        className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className} bg-[#fffeff]`}
+        className={`flex min-h-[calc(100vh-70px)] flex-col items-center justify-between p-24 ${inter.className} bg-[#fffeff]`}
       >
         <div className={clsx('flex relative flex-col gap-[6px]',
           'w-[462px]  px-[8px] py-[12px]',
