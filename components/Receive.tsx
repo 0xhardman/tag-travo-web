@@ -53,6 +53,11 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
         ],
     })
     useEffect(() => {
+        if (data) {
+            console.log(data)
+        } else {
+            return
+        }
         const temp = data?.map((item, index) => {
             return createData(ids[index], `Tag ${index + 1}`, "Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt", 12, Number(formatEther(item.result as any)))
         })
