@@ -228,7 +228,7 @@ export default function Test() {
                                             } as any])
                                             // console.log("please do something here")
                                         }}
-                                        credential_types={['orb', 'phone']} // the credentials you want to accept
+                                        credential_types={['orb', 'phone'] as any} // the credentials you want to accept
                                         enableTelemetry
                                     >
                                         {({ open }) => <div onClick={open} className='border cursor-pointer text-center mt-4 px-2 py-1 text-white bg-black rounded-lg'>Verify</div>}
