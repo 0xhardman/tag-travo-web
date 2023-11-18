@@ -73,7 +73,7 @@ async function getRidsTree(tag: Tag) {
   let { rids } = await getTagRids(tag)
   rids = rids.map(rid => ethers.utils.keccak256(
     ethers.utils.toUtf8Bytes(rid.toLowerCase())
-  ));
+  ).slice(0, 62));
 
   const ridsTreeData = {}
   for (const rid of rids) ridsTreeData[rid] = 1;
@@ -323,7 +323,7 @@ type SecretInfo = {
 function getSecretInfo(relation: Relation) {
   const rid = `${relation.type}:${relation.id.toLowerCase()}`
   return {
-    identifier: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(rid)),
+    identifier: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(rid)).slice(0, 62),
     secret: relation.secret,
     commitmentReceipt: relation.commitmentReceipt
   } as SecretInfo
