@@ -7,6 +7,9 @@ const inter = Albert_Sans({ subsets: ['latin'] })
 
 export default function Home() {
   const router = useRouter()
+  useEffect(() => {
+    router.push('/customer/login')
+  }, [])
   return (
     <Layout>
       <main

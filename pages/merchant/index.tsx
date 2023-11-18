@@ -7,6 +7,9 @@ const inter = Albert_Sans({ subsets: ['latin'] })
 
 export default function Home() {
   const router = useRouter()
+  useEffect(() => {
+    router.push('/merchant/swaper')
+  }, [])
   return (
     <Layout>
       <main

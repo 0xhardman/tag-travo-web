@@ -10,6 +10,7 @@ import Layout from '@/components/Layout'
 import Tip from '@/components/Tip'
 import { dataSwapContract } from "@/contracts/dataSwapContract";
 import { parseEther } from 'viem'
+import { merchantTotal } from '@/constrants';
 
 const inter = Albert_Sans({ subsets: ['latin'] })
 
@@ -27,7 +28,7 @@ export default function Swaper() {
     functionName: 'buy',
   })
   return (
-    <Layout>
+    <Layout current='Swaper' total={merchantTotal}>
       <main
         className={`flex min-h-[calc(100vh-70px)] flex-col items-center justify-between p-24 ${inter.className} bg-[#fffeff]`}
       >

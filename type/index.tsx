@@ -7,3 +7,9 @@ export interface Tag {
     balance?: number,
 }
 
+
+
+export interface Navigator {
+    path: string,
+    name: string
+}
