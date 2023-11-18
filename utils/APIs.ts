@@ -4,6 +4,32 @@ import { authPost, authPut } from "./AuthUtils";
 import { SignInfo } from "@/hooks/useSign";
 import { User, UserRelation } from "./interfaces";
 
+type InputPoseidon<T> = string;
+
+type InputCredentialId = string;
+type InputSourceSecret = string;
+type InputSourceSecretHash = InputPoseidon<[InputSourceSecret, 1]> // Commitment
+
+type InputDestinationIdentifier = string;
+type InputCommitmentMapperPubKey = [string, string];
+type InputExternalNullifier = InputCredentialId;
+type InputNullifier = InputPoseidon<
+  [InputSourceSecretHash, InputExternalNullifier]
+  >;
+
+export type SnarkProof = {
+    a: [string, string];
+    b: [[string, string], [string, string]];
+    c: [string, string];
+    // input: string[];
+    input: [
+        InputDestinationIdentifier,
+        ...InputCommitmentMapperPubKey,
+        InputExternalNullifier,
+        InputNullifier
+    ]
+}
+
 /**
  根据传入的type获取要签名的数据
  **/
@@ -28,9 +54,9 @@ export const GetBuyRecord = get<{ // 请求方式：GET
  根据传入的签名信息验证签名
  **/
 export const VerifySign = post<SignInfo, // 签名信息
-    {
-        key: string // 验证签名后返回的密钥
-    }>("/api/sign/verify");
+  {
+      key: string // 验证签名后返回的密钥
+  }>("/api/sign/verify");
 
 export interface BindAddressResponse {
     relation: Relation;
