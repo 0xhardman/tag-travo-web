@@ -66,10 +66,7 @@ export class HydraS1Prover {
     externalNullifier = BigNumber.from(externalNullifier);
     chainId = BigNumber.from(chainId);
 
-    const zeroPaddedSourceIdentifier = ethers.utils.hexZeroPad(
-      source.identifier.toHexString(),
-      20
-    );
+    const zeroPaddedSourceIdentifier = source.identifier.toHexString();
 
     const poseidon = await buildPoseidon();
 
