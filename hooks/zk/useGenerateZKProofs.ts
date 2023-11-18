@@ -65,7 +65,7 @@ const tagState = {
 
 export async function getTagRids(tag: Tag) {
   return {
-    rids: tagState.scanResult[tag.addressesRoot],
+    rids: tagState.scanResult.rootResults[tag.addressesRoot],
     addressesRoot: tag.addressesRoot
   }
 }
