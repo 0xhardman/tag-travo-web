@@ -7,9 +7,7 @@ export interface Tag {
     balance?: number,
 }
 
-
-
-export interface Navigator {
+export interface LayoutNavigator {
     path: string,
     name: string
 }

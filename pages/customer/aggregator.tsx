@@ -18,7 +18,6 @@ const web3AuthConfig: Web3AuthConfig = {
 }
 
 // Instantiate and initialize the pack
-const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig)
 
 const inter = Albert_Sans({ subsets: ['latin'] })
 export default function Test() {
@@ -27,18 +26,17 @@ export default function Test() {
     useEffect(() => {
         console.log({ address })
         if (!address) {
+            localStorage.clear();
+            router.push('login')
             return
         }
-        router.push('aggregator')
+        // router.push('aggregate')
     }, [address])
-    return <CustomerLayout current='Login' total={customerTotal} hideConnectWallet={true}>
+    return <CustomerLayout current='Aggregator' total={customerTotal} hideConnectWallet={true}>
         <main
             className={`flex min-h-[calc(100vh-70px)] flex-col items-center justify-start p-24 ${inter.className} bg-[#fffeff]`}
         >
-            <div>
-                <Typography variant='h1' fontWeight={600} color="#008192">Hi Anon!</Typography>
-                <Button onClick={() => { login() }} fullWidth variant='outlined' size='large'>Login with AA</Button>
-            </div>
+            Your AA address: {address}
         </main>
     </CustomerLayout>
 

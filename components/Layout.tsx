@@ -2,10 +2,10 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import { Navigator } from "@/type";
+import { LayoutNavigator } from "@/type";
 import clsx from "clsx";
 
-export default function Layout({ children, current, total, hideConnectWallet = false }: { children: React.ReactNode, current?: string, total?: Navigator[], hideConnectWallet?: boolean }) {
+export default function Layout({ children, current, total, hideConnectWallet = false }: { children: React.ReactNode, current?: string, total?: LayoutNavigator[], hideConnectWallet?: boolean }) {
     const router = useRouter()
     // const [current, setCurrent] = useState<'swaper' | 'sender'>('swaper')
     // useEffect(() => {

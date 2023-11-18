@@ -19,6 +19,7 @@ import {
 } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
+import { Web3AuthContextProvider } from '@/components/Web3AuthContext';
 
 export const bnbTest = {
   id: 97,
@@ -63,7 +64,9 @@ const wagmiConfig = createConfig({
 export default function App({ Component, pageProps }: AppProps) {
   return <WagmiConfig config={wagmiConfig}>
     <RainbowKitProvider chains={chains}>
-      <Component {...pageProps} />
+      <Web3AuthContextProvider>
+        <Component {...pageProps} />
+      </Web3AuthContextProvider>
     </RainbowKitProvider>
   </WagmiConfig >
 }

@@ -12,7 +12,6 @@ import { type } from 'os'
 import { useRouter } from 'next/router'
 import { useForm, Controller } from 'react-hook-form'
 import { useAccount, useContractReads, useContractWrite } from 'wagmi'
-import { Navigator } from '@/type'
 import { merchantTotal } from '@/constrants'
 
 const inter = Albert_Sans({ subsets: ['latin'] })
@@ -105,7 +104,7 @@ export default function Sender() {
   const loading = open && options.length === 0;
 
   return (
-    <Layout current='Sender' total={merchantTotal as Navigator[]}>
+    <Layout current='Sender' total={merchantTotal}>
       <main
         className={`flex min-h-[calc(100vh-70px)] flex-col items-center justify-start p-24 ${inter.className} bg-[#fffeff]`}
       >
