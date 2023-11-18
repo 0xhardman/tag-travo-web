@@ -17,8 +17,8 @@ export default function Layout({ children, current, total, hideConnectWallet = f
             <div onClick={() => {
                 router.push('/')
             }} className='flex gap-4 items-center cursor-pointer'>
-                <div className='flex gap-2'>
-                    <img className='w-[30px]' src="/logo-short.svg" alt="" />
+                <div className='flex gap-2 items-center'>
+                    <img className='w-[50px]' src="/logo-short.png" alt="" />
                     <div className='text-[20px] text-[#008192] font-bold'>TagTrove</div>
                 </div>
             </div>
