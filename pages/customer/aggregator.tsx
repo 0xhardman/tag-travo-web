@@ -30,6 +30,7 @@ const MyButton = ({ children, onClick }: { children: React.ReactNode, onClick: (
 }
 const inter = Albert_Sans({ subsets: ['latin'] })
 export default function Test() {
+    const { handleSign } = useContext(Web3AuthContext)
     const { tags, address: AAAddress, relations, setRelations, web3BioRelations, setWeb3BioRelations, user } = useContext(Web3AuthContext)
     const [timestamp, setTimestamp] = useState('')
     const [message, setMessage] = useState('')
@@ -218,45 +219,12 @@ export default function Test() {
                                 </div>
                         }
                     </div>
-                    <MyButton onClick={() => { }}>
+                    <MyButton onClick={() => { handleSign("zkproof") }}>
                         Encrypt
                     </MyButton>
                 </div>
             </div>
         </main>
-        {/* <Grid container spacing={2}>
-                <Grid item xs={7} sx={{
-                    // bgcolor: 'blue',
-                }}>
-                    <Box >132</Box>
-                </Grid>
-                <Grid item alignItems="center" justifyContent="center" xs={5} sx={{
-                    borderLeft: '1px solid green',
-                    // bgcolor: 'green',
-                }}>
-                    <Grid container spacing={6}>
-                        {["Addr: Uniswap Master", "Addr: Scroll User", "Github: Solidity Dev", "X: FinTech FinTech FinTech", "World Coin human"].map((value, index) => {
-                            return <Grid key={index} xs={5} sx={{
-                                display: 'flex',
-                                textAlign: 'center',
-                                border: '1px solid red',
-
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}>{value}</Grid>
-
-                        })}
-
-                    </Grid>
-                </Grid>
-
-            </Grid> */}
-
-        {/* <main
-            className={`flex min-h-[calc(100vh-70px)] flex-col items-center justify-start p-24 ${inter.className} bg-[#fffeff]`}
-        >
-            Your AA address: {address}
-        </main> */}
     </CustomerLayout>
 
 }
