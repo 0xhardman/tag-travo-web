@@ -1,5 +1,6 @@
 import { use, useCallback, useContext, useEffect, useState } from 'react';
-
+import { IDKitWidget } from "@worldcoin/idkit";
+import FileUploader from '@/components/FileUploader';
 import { customerTotal } from '@/constrants';
 import { Albert_Sans } from 'next/font/google';
 import CustomerLayout from '@/components/CustomerLayout';
@@ -10,7 +11,7 @@ import { styled } from '@mui/material/styles';
 import clsx from 'clsx';
 import { useAccount, useConnect, useDisconnect, useSignMessage } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { BindAddress, GetDataToSign, VerifySign } from '@/utils/APIs';
+import { BindAddress, GetDataToSign, Tag, VerifySign } from '@/utils/APIs';
 import { StringUtils } from '@/utils/StringUtils';
 // import { signMessage } from 'viem/accounts';
 
@@ -31,10 +32,16 @@ const MyButton = ({ children, onClick }: { children: React.ReactNode, onClick: (
 const inter = Albert_Sans({ subsets: ['latin'] })
 export default function Test() {
     const { handleSign } = useContext(Web3AuthContext)
-    const { tags, address: AAAddress, relations, setRelations, web3BioRelations, setWeb3BioRelations, user } = useContext(Web3AuthContext)
+    const { tags, setTags, address: AAAddress, relations, setRelations, web3BioRelations, setWeb3BioRelations, user } = useContext(Web3AuthContext)
     const [timestamp, setTimestamp] = useState('')
     const [message, setMessage] = useState('')
     const { address } = useAccount()
+    const [fileName, setFileName] = useState("");
+    const handleFile = (file) => {
+        console.log("handleFile", file)
+        if (!file) return;
+        setFileName(file?.name);
+    };
     const { data: signData, isError, isLoading, isSuccess, signMessage } = useSignMessage({
         message,
         onSuccess: (data) => {
@@ -94,6 +101,23 @@ export default function Test() {
             setTimestamp(timestamp)
         })()
     }, [address])
+    useEffect(() => {
+        if (fileName == "") return
+        setTags([...tags, {
+            addressesRoot: "",
+            curator: "",
+            dataPower: 100,
+            description: "Twitter User",
+            id: "13321",
+            name: "X: FinTech",
+            // rules: "Twitter User",
+            /**
+             * "Active" | "Hidden"
+             */
+            state: "Active",
+            zkEnable: true,
+        } as any])
+    }, [fileName])
     const data = ["Addr: Uniswap Master", "Addr: Scroll User", "Github: Solidity Dev", "X: FinTech FinTech FinTech", "World Coin human"]
     return <CustomerLayout current='Aggregator' total={customerTotal} hideConnectWallet={false}>
         <main
@@ -183,7 +207,32 @@ export default function Test() {
                                 }}><img width={30} height={30} className='' src="/worldcoin.svg" alt="" /></div>
                                 <div>
                                     <div className='font-bold capitalize text-black'>World Coin</div>
-                                    <div className='border text-center mt-4 px-2 py-1 text-white bg-black rounded-lg'>Verify</div>
+                                    <IDKitWidget
+                                        app_id="app_staging_3a03da90c7ba5c690c94d02bb373855c" // obtained from the Developer Portal
+                                        action="RealPersonVerify" // this is your action name from the Developer Portal
+                                        signal="user_value" // any arbitrary value the user is committing to, e.g. a vote
+                                        onSuccess={() => {
+                                            setTags([...tags, {
+                                                addressesRoot: "",
+                                                curator: "",
+                                                dataPower: 100,
+                                                description: "X: FinTech FinTech FinTech",
+                                                id: "132359",
+                                                name: "WorldCoin: Real Human",
+                                                rules: "X: FinTech",
+                                                /**
+                                                 * "Active" | "Hidden"
+                                                 */
+                                                state: "Active",
+                                                zkEnable: true,
+                                            } as any])
+                                            // console.log("please do something here")
+                                        }}
+                                        credential_types={['orb', 'phone']} // the credentials you want to accept
+                                        enableTelemetry
+                                    >
+                                        {({ open }) => <div onClick={open} className='border cursor-pointer text-center mt-4 px-2 py-1 text-white bg-black rounded-lg'>Verify</div>}
+                                    </IDKitWidget>
                                 </div>
                             </div>
                             <div className='flex flex-col w-[180px] justify-between items-start p-6 gap-2 border rounded-md overflow-hidden'>
@@ -193,7 +242,10 @@ export default function Test() {
                                 }}><img width={30} height={30} className='' src="/twitter.svg" alt="" /></div>
                                 <div>
                                     <div className='font-bold capitalize text-black'>Twitter</div>
-                                    <div className='border text-center mt-4 px-2 py-1 text-white bg-[#00a2e1] rounded-lg'>Upload</div>
+                                    {/* <div className='border text-center mt-4 px-2 py-1 text-white bg-[#00a2e1] rounded-lg'> */}
+                                    <FileUploader text={fileName ? fileName : 'upload'} className='border text-center mt-4 px-2 py-1 text-white bg-[#00a2e1] rounded-lg' handleFile={handleFile} />
+
+                                    {/* </div> */}
                                 </div>
                             </div>
 
@@ -224,6 +276,6 @@ export default function Test() {
                 </div>
             </div>
         </main>
-    </CustomerLayout>
+    </CustomerLayout >
 
 }
