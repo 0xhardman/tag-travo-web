@@ -170,7 +170,7 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
             case 'zkproof':
                 console.log("zkproof")
                 await generateZKProofs(address, signInfo as SignInfo<"zkproof">);
-                await mint(signInfo);
+                // await mint(signInfo);
                 // TODO: ZKProof完了做什么？
                 break;
         }

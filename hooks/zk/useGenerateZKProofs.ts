@@ -121,9 +121,10 @@ export function getCommitmentSync(poseidon, relationId: string, user?: User, ind
 
 export function calcTags(relations: Relation[], tags: Tag[], scanResult: GetGetScanResultRes) {
   const rids = relations.map(r => `${r.type}:${r.id}`);
+  const rootResults = scanResult.rootResults
 
   const tagsGroup = rids.map(rid => tags.filter(
-    t => addrInclude(scanResult[t?.addressesRoot] || [], rid)
+    t => addrInclude(rootResults[t?.addressesRoot] || [], rid)
   ))
   const relationTags = tagsGroup.map((ts, i) => [relations[i], ts] as [Relation, Tag[]])
   const scannedTags = removeDuplicates(tagsGroup.flat())
@@ -274,6 +275,8 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
       }
       setSnarkProofs(snarkProofs);
 
+      await mint(signInfo, snarkProofs);
+
     } finally {
       // setProgress(0);
       setIsPreparing(false)
@@ -281,7 +284,7 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
     }
   }
 
-  const mint = async (signInfo) => {
+  const mint = async (signInfo, snarkProofs) => {
     setMintResult(null);
 
     try {
@@ -302,7 +305,7 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
 
   return {
     generateZKProofs, // 生成ZKP
-    mint, // ZKP生成出来后（snarkProofs有值）调用此函数进行Mint操作
+    // mint, // ZKP生成出来后（snarkProofs有值）调用此函数进行Mint操作
     isPreparing, isGenerating, isMinting, // 状态
     progress, // 进度 0 ~ 1
     tasks, // 生成ZKP任务列表
