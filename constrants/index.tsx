@@ -14,4 +14,7 @@ export const customerTotal = [{
 }, {
     path: '/customer/aggregator',
     name: 'Aggregator',
+}, {
+    path: '/customer/dashboard',
+    name: 'Dashboard',
 },]
