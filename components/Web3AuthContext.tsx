@@ -68,7 +68,7 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
     const [address, setAddress] = useState<string>("");
 
     const {
-        generateZKProofs, mint, progress,
+        generateZKProofs, progress,
         isPreparing, isGenerating, isMinting
     } = useGenerateZKProofs(user, [...relations, ...web3BioRelations])
 
