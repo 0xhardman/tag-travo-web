@@ -45,7 +45,7 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
     const chainConfig = {
         chainNamespace: CHAIN_NAMESPACES.EIP155,
         chainId: "0x1",
-        rpcTarget: "https://rpc.ankr.com/eth",
+        rpcTarget: "https://mainnet.infura.io/v3/fd3c3b7b49c84a90ad027e1bfacf2fb8",
         displayName: "Ethereum Mainnet",
         blockExplorer: "https://goerli.etherscan.io",
         ticker: "ETH",
