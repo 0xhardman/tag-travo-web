@@ -8,6 +8,7 @@ import {
 } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
+  scrollSepolia,
   mainnet,
   polygon,
   optimism,
@@ -40,7 +41,7 @@ export const bnbTest = {
 }
 
 const { chains, publicClient } = configureChains(
-  [bnbTest],
+  [scrollSepolia, bnbTest],
   [
     // alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
     publicProvider()
