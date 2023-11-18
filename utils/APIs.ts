@@ -39,6 +39,7 @@ export interface Relation {
     state: number;
     type: number;
     userId: string;
+    platform?: string;
 }
 
 export interface NewUserRelation {

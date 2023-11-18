@@ -1,14 +1,11 @@
 import { use, useCallback, useContext, useEffect, useState } from 'react';
 
-
-
-
 import { customerTotal } from '@/constrants';
 import { Albert_Sans } from 'next/font/google';
 import CustomerLayout from '@/components/CustomerLayout';
 import { Web3AuthContext } from '@/components/Web3AuthContext';
 import { useRouter } from 'next/router';
-import { Box, Container, Grid, Paper, Typography } from '@mui/material';
+import { Box, Container, Grid, Paper, Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import clsx from 'clsx';
 import { useAccount, useConnect, useDisconnect, useSignMessage } from 'wagmi'
@@ -49,23 +46,52 @@ export default function Test() {
 
     })
     const { openConnectModal, connectModalOpen } = useConnectModal();
+    const [open, setOpen] = useState(false)
     const { disconnect } = useDisconnect()
-    const [addresses, setAddresses] = useState([] as string[])
     const router = useRouter()
 
     const handleAddAddress = async () => {
-        disconnect()
-        console.log(openConnectModal)
+        if (address) {
+            setOpen(true)
+        }
         openConnectModal?.()
     }
-    console.log({ relations })
-
+    const handleConfirmDisconnect = () => {
+        disconnect()
+        setOpen(false)
+    }
+    console.log({ web3BioRelations })
+    const handleClose = () => {
+        setOpen(false);
+    };
+    useEffect(() => { })
     const data = ["Addr: Uniswap Master", "Addr: Scroll User", "Github: Solidity Dev", "X: FinTech FinTech FinTech", "World Coin human"]
     const tmpAddress = "0xb15115A15d5992A756D003AE74C0b832918fAb75"
     return <CustomerLayout current='Aggregator' total={customerTotal} hideConnectWallet={false}>
         <main
             className={`flex min-h-[calc(100vh-70px)] flex-col items-center justify-start py-10 px-24 ${inter.className} bg-[#fffeff]`}
         >
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    ATTENTION
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Please disconnect your current account before adding a new one.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Disagree</Button>
+                    <Button onClick={handleConfirmDisconnect} autoFocus>
+                        Disconnect
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <Typography mb={3} variant='h3' fontWeight='600' color={"#008093"}>Aggregator</Typography>
             <div className={clsx('flex  gap-[6px]',
                 'w-[1362px]  px-[28px] py-[24px]',
@@ -77,7 +103,7 @@ export default function Test() {
                             <Typography variant='h4' fontWeight='600' color={"#008093"}>Your AA address:</Typography>
                         </div>
                         <div className='flex text-[20px] justify-between rounded-lg border p-2 mb-[10px]'>
-                            <div>{AAAddress || tmpAddress}</div>
+                            <div>{user.mintAddress || tmpAddress}</div>
                             <img width={15} height={15} src="/copy.svg" alt="" />
                         </div>
                         <div className='flex justify-between items-center'>
@@ -99,16 +125,17 @@ export default function Test() {
                             <Typography variant='h4' fontWeight='600' color={"#008093"}>Associate Web2 Account:</Typography>
                         </div>
                         <div className='flex flex-wrap justify-start gap-x-5 gap-y-2 py-4'>
-                            {[
-                                { type: 'twitter', value: "0xhardman" },
-                                { type: 'github', value: "0xhardman" }
-                            ].map((value, index) => {
+                            {web3BioRelations.map((value, index) => {
                                 return <div key={index} className='flex justify-between px-4 py-2 gap-2 border rounded-md'>
-                                    {value.type == "twitter" && <div className='flex rounded-xl w-[45px] h-[45px] justify-center items-center bg-[#029ee5]'><img width={30} height={30} className='' src="/twitter.svg" alt="" /></div>}
-                                    {value.type == "github" && <div className='flex rounded-xl w-[45px] h-[45px] justify-center items-center bg-[#000]'><img width={30} height={30} className='' src="/github.svg" alt="" /></div>}
+                                    {value.platform == "twitter" && <div className='flex rounded-xl w-[45px] h-[45px] justify-center items-center bg-[#029ee5]'><img width={30} height={30} className='' src="/twitter.svg" alt="" /></div>}
+                                    {value.platform == "github" && <div className='flex rounded-xl w-[45px] h-[45px] justify-center items-center bg-[#000]'><img width={30} height={30} className='' src="/github.svg" alt="" /></div>}
+                                    {value.platform == "discord" && <div className='flex rounded-xl w-[45px] h-[45px] justify-center items-center bg-[#5b66eb]'><img width={30} height={30} className='' src="/discord.svg" alt="" /></div>}
+                                    {value.platform == "telegram" && <div className='flex rounded-xl w-[45px] h-[45px] justify-center items-center bg-[#5386c8]'><img width={30} height={30} className='' src="/telegram.svg" alt="" /></div>}
+                                    {value.platform == "farcaster" && <div className='flex rounded-xl w-[45px] h-[45px] justify-center items-center bg-[#8466cb]'><img width={30} height={30} className='' src="/farcaster.svg" alt="" /></div>}
+
                                     <div>
-                                        <div className='font-bold capitalize text-black'>{value.type}</div>
-                                        <div>{value.value}</div>
+                                        <div className='font-bold capitalize text-black'>{value.platform}</div>
+                                        <div>{value.name}</div>
                                     </div>
                                 </div>
                             })}
@@ -137,7 +164,7 @@ export default function Test() {
 
                                 }}><img width={30} height={30} className='' src="/twitter.svg" alt="" /></div>
                                 <div>
-                                    <div className='font-bold capitalize text-black'>Wold Coin</div>
+                                    <div className='font-bold capitalize text-black'>Twitter</div>
                                     <div className='border text-center mt-4 px-2 py-1 text-white bg-[#00a2e1] rounded-lg'>Upload</div>
                                 </div>
                             </div>

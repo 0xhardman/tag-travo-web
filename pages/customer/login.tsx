@@ -29,7 +29,7 @@ const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig)
 
 const inter = Albert_Sans({ subsets: ['latin'] })
 export default function Test() {
-    const { login, address, sign, setRelations, setUser, setWeb3BioRelations } = useContext(Web3AuthContext)
+    const { login, aaSignIn, address, sign, setRelations, setUser, setWeb3BioRelations } = useContext(Web3AuthContext)
     const [message, setMessage] = useState('')
     const [timestamp, setTimestamp] = useState('')
     const [open, setOpen] = useState(false)
@@ -52,19 +52,11 @@ export default function Test() {
         const { key } = await VerifySign({ address, params: { timestamp }, type: 'login', signature })
         setupToken(key, 'login', true)
         console.log(key)
-        const userRelations = await Login({})
-        console.log(userRelations)
-        setRelations(userRelations.relations)
-        setUser(userRelations.user)
-        setWeb3BioRelations(userRelations.web3BioRelations)
+        await login()
 
         router.push('aggregator')
 
     }
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
 
     const handleClear = () => {
         localStorage.clear();
@@ -114,7 +106,7 @@ export default function Test() {
             </Dialog>
             <div>
                 <Typography variant='h1' fontWeight={600} color="#008192">Hi Anon!</Typography>
-                <Button onClick={() => { login() }} fullWidth variant='outlined' size='large'>Login with AA</Button>
+                <Button onClick={() => { aaSignIn() }} fullWidth variant='outlined' size='large'>Login with AA</Button>
                 <Typography variant='h4' fontWeight={600} color="#008192">{address}</Typography>
                 <Button onClick={() => { handleSign() }} fullWidth variant='outlined' size='large'>Sign In</Button>
                 <Button onClick={() => {

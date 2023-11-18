@@ -8,8 +8,9 @@ import { ethers } from 'ethers';
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { CommonPrivateKeyProvider } from "@web3auth/base-provider";
 import { set } from "react-hook-form";
-import { GetDataToSign, Relation } from "@/utils/APIs";
+import { GetDataToSign, Login, Relation } from "@/utils/APIs";
 import { User } from "@/utils/interfaces";
+import { getLocalStorage } from "@/utils/StorageUtils";
 const web3AuthConfig: Web3AuthConfig = {
     txServiceUrl: 'https://safe-transaction-goerli.safe.global'
 }
@@ -19,7 +20,8 @@ const web3AuthConfig: Web3AuthConfig = {
 
 interface Web3AuthContextType {
     address: string,
-    login: () => void,
+    login: () => Promise<void>,
+    aaSignIn: () => void,
     sign: (message: string) => Promise<string>,
     web3BioRelations: Relation[],
     setWeb3BioRelations: (relations: Relation[]) => void,
@@ -113,11 +115,10 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
 
     }, [web3authPack])
 
-    const login = useCallback(async () => {
+    const aaSignIn = useCallback(async () => {
         const data = await web3authPack?.signIn()
         console.log({ data })
         if (!data?.eoa) return
-        // const signData = await GetDataToSign({ address: data?.eoa, type: "login" })
         setAddress(data?.eoa)
     }, [web3authPack]);
     useEffect(() => {
@@ -127,8 +128,23 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
             console.log(info)
         }
     }, [web3authPack])
-    // const login = () => { console.log(666) }
+    const login = async () => {
+        const userRelations = await Login({})
+        console.log(userRelations)
+        setRelations(userRelations.relations)
+        setUser(userRelations.user)
+        setWeb3BioRelations(userRelations.web3BioRelations)
+    }
+    useEffect(() => {
+        const token = getLocalStorage('token-login')
+        console.log(user)
+        if (token && Object.keys(user).length == 0) {
+            console.log(token)
+            login()
+        }
+
+    }, [])
     return <Web3AuthContext.Provider value={{
-        address, login, sign, web3BioRelations, setWeb3BioRelations, relations, setRelations, user, setUser
+        address, aaSignIn, login, sign, web3BioRelations, setWeb3BioRelations, relations, setRelations, user, setUser
     }}>{children}</Web3AuthContext.Provider >
 }
