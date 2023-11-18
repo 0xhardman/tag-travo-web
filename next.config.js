@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 BE_API = process.env.BE_API
-IMG_API = "demo.data2.cash"
+IMG_API = "https://demo.data2.cash"
 
 const nextConfig = {
   async rewrites() {
