@@ -319,8 +319,9 @@ type SecretInfo = {
 }
 
 function getSecretInfo(relation: Relation) {
+  const rid = `${relation.type}:${relation.id}`
   return {
-    identifier: relation.id,
+    identifier: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(rid)),
     secret: relation.secret,
     commitmentReceipt: relation.commitmentReceipt
   } as SecretInfo
