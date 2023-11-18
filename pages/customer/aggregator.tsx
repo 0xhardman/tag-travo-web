@@ -1,5 +1,3 @@
-import { Web3AuthModalPack, Web3AuthConfig } from '@safe-global/auth-kit'
-
 import { use, useCallback, useContext, useEffect, useState } from 'react';
 
 
@@ -43,7 +41,7 @@ export default function Test() {
     const tmpAddress = "0xb15115A15d5992A756D003AE74C0b832918fAb75"
     return <CustomerLayout current='Aggregator' total={customerTotal} hideConnectWallet={true}>
         <main
-            className={`flex min-h-[calc(100vh-70px)] flex-col items-center justify-start p-24 ${inter.className} bg-[#fffeff]`}
+            className={`flex min-h-[calc(100vh-70px)] flex-col items-center justify-start py-10 px-24 ${inter.className} bg-[#fffeff]`}
         >
             <Typography variant='h3' fontWeight='600' color={"#008093"}>Aggregator</Typography>
             <Typography align='center' variant='h5' color="gray" mb={2}>Hi! Data Provider!<br />
@@ -54,6 +52,13 @@ export default function Test() {
                 'text-[#7c7c7c]')}>
                 <div className='flex flex-col w-[60%]'>
                     <div>
+                        <div className='flex justify-between items-center'>
+                            <Typography variant='h4' fontWeight='600' color={"#008093"}>Your AA address:</Typography>
+                        </div>
+                        <div className='flex text-[20px] justify-between rounded-lg border p-2 mb-[10px]'>
+                            <div>{address || tmpAddress}</div>
+                            <img width={15} height={15} src="/copy.svg" alt="" />
+                        </div>
                         <div className='flex justify-between items-center'>
                             <Typography variant='h4' fontWeight='600' color={"#008093"}>Web3 Address:</Typography>
                             <MyButton onClick={() => { }}>
