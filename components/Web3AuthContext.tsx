@@ -6,7 +6,6 @@ import { OpenloginAdapter } from '@web3auth/openlogin-adapter'
 import { useCallback, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { ExternalProvider } from '@ethersproject/providers';
-import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { CommonPrivateKeyProvider } from "@web3auth/base-provider";
 import { setupToken } from '@/utils/AuthUtils';
 import Dialog from '@mui/material/Dialog';
@@ -15,7 +14,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Button, Typography } from '@mui/material';
-import { set } from "react-hook-form";
 import { GetDataToSign, GetScanResult, GetTags, Login, Relation, VerifySign } from "@/utils/APIs";
 import { User } from "@/utils/interfaces";
 import { getLocalStorage } from "@/utils/StorageUtils";

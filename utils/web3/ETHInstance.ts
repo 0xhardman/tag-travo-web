@@ -18,7 +18,7 @@ export function toWei(ether: string | number) {
   return windowEthereum().web3.utils.toWei(ether.toString());
 }
 
-const DefaultChain: ChainType = "mumbai"
+const DefaultChain: ChainType = "scroll-test"
 export function chainName() {
   return process.env.CHAIN || DefaultChain
 }

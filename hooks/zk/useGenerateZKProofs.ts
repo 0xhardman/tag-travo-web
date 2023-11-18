@@ -7,12 +7,9 @@ import { SnarkProof } from "@/hooks/zk/core/snark-proof";
 import { AddressTreeHeight, HydraS1Prover, RegistryTreeHeight } from "@/hooks/zk/core/hydra-s1-prover";
 import {authPost, authPut} from "@/utils/AuthUtils";
 import {addrEq, addrInclude} from "@/utils/AddressUtils";
-import { PromiseUtils } from "@/utils/PromiseUtils";
 import { getContract } from "@/utils/web3/ContractFactory";
 
 import "./abis/ZKProfile"
-import { chain, chainName } from "@/utils/web3/ETHInstance";
-import {StringUtils} from "@/utils/StringUtils";
 import {GetGetScanResultRes, GetScanResult, GetTags, Tag} from "@/utils/APIs";
 import {useState} from "react";
 import {useChainId} from "wagmi";
@@ -47,11 +44,11 @@ export const PushMintCommitment = authPut<{
 
 export const GetEddsaAccountPubKey = get<{},
   string[]
->("/api/scan/pubKey");
+>("/api/tag/pubKey");
 
 export const GetRegistryRoot = get<{},
   string
->("/api/scan/registryRoot");
+>("/api/tag/registryRoot");
 
 export const MintSBT = authPost<{
   signInfo: SignInfo
@@ -60,7 +57,7 @@ export const MintSBT = authPost<{
 }, {
   tokenId: string
   txHash: string
-}>("/api/scan/mint");
+}>("/api/tag/mint");
 
 const tagState = {
   tags: [], scanResult: {} as GetGetScanResultRes
@@ -193,6 +190,9 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
         const r = relations.find(r2 => addrEq(r2.id, cr.id) && r2.type == cr.type);
         r.commitmentReceipt = cr.commitmentReceipt;
       })
+      console.log("generateZKProof", {
+        relations, noCommitmentRelations, pushingRelations, committedRelations
+      });
 
       // 获取需要验证的所有账号的SecretInfo
       // const secretInfos = relations.map(r => getSecretInfo(r));
@@ -201,6 +201,9 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
       // 获取Destination账号的SecretInfo
       const { secret, commitment } = await getCommitment(destination, user);
 
+      console.log("getCommitment", {
+        secret, commitment, destination, user
+      });
       // const zkSignInfo = await sign("zkproof", { commitment });
       const { commitmentMapperPubKey, commitmentReceipt } =
         await PushMintCommitment({ signInfo, commitment });
@@ -225,7 +228,12 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
 
       const prover = new HydraS1Prover(registryTree, pubKey);
 
-      const {relationTags} = calcTags(relations, tagState.tags, tagState.scanResult)
+      const {relationTags, scannedTags} = calcTags(relations, tagState.tags, tagState.scanResult)
+
+      console.log("calcTags", {
+        relations, tagState, relationTags, scannedTags, getSecretInfo
+      });
+
       const tasks = relationTags.map(([r, ts]) =>
         ts.map(t => [t, getSecretInfo(r)] as [Tag, SecretInfo])
       ).flat() as [Tag, SecretInfo][]
