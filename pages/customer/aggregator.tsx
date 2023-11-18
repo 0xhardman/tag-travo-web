@@ -95,7 +95,6 @@ export default function Test() {
         })()
     }, [address])
     const data = ["Addr: Uniswap Master", "Addr: Scroll User", "Github: Solidity Dev", "X: FinTech FinTech FinTech", "World Coin human"]
-    const tmpAddress = "0xb15115A15d5992A756D003AE74C0b832918fAb75"
     return <CustomerLayout current='Aggregator' total={customerTotal} hideConnectWallet={false}>
         <main
             className={`flex min-h-[calc(100vh-70px)] flex-col items-center justify-start py-10 px-24 ${inter.className} bg-[#fffeff]`}
@@ -132,7 +131,7 @@ export default function Test() {
                             <Typography variant='h4' fontWeight='600' color={"#008093"}>Your AA address:</Typography>
                         </div>
                         <div className='flex text-[20px] justify-between rounded-lg border p-2 mb-[10px]'>
-                            <div>{user.mintAddress || tmpAddress}</div>
+                            <div>{user.mintAddress}</div>
                             <img width={15} height={15} src="/copy.svg" alt="" />
                         </div>
                         <div className='flex justify-between items-center'>
