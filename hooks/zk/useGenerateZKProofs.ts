@@ -1,13 +1,13 @@
-import {Credential, Relation, RelationType, User} from "@/utils/interfaces";
-import { KVMerkleTree } from "@sismo-core/kv-merkle-tree";
-import { get, put } from "@/utils/APIUtils";
-import { SignInfo, useSign } from "@/hooks/useSign";
+import {Relation, RelationType, User} from "@/utils/interfaces";
+import {KVMerkleTree} from "@sismo-core/kv-merkle-tree";
+import {get} from "@/utils/APIUtils";
+import {SignInfo} from "@/hooks/useSign";
 import {getPoseidon, poseidon} from "@/utils/PoseidonUtils";
-import { SnarkProof } from "@/hooks/zk/core/snark-proof";
-import { AddressTreeHeight, HydraS1Prover, RegistryTreeHeight } from "@/hooks/zk/core/hydra-s1-prover";
+import {SnarkProof} from "@/hooks/zk/core/snark-proof";
+import {AddressTreeHeight, HydraS1Prover, RegistryTreeHeight} from "@/hooks/zk/core/hydra-s1-prover";
 import {authPost, authPut} from "@/utils/AuthUtils";
 import {addrEq, addrInclude} from "@/utils/AddressUtils";
-import { getContract } from "@/utils/web3/ContractFactory";
+import {getContract} from "@/utils/web3/ContractFactory";
 
 import "./abis/ZKProfile"
 import {GetGetScanResultRes, GetScanResult, GetTags, Tag} from "@/utils/APIs";
@@ -15,7 +15,7 @@ import {useState} from "react";
 import {useChainId} from "wagmi";
 import {MathUtils} from "@/utils/MathUtils";
 import {getLocalStorage, getOrSetLocalStorage} from "@/utils/StorageUtils";
-import {BigNumber, ethers} from "ethers";
+import {BigNumber} from "ethers";
 import {removeDuplicates} from "@/utils/ArrayUtils";
 
 export const PushCommitment = authPut<{
@@ -71,9 +71,12 @@ export async function getTagRids(tag: Tag) {
 }
 async function getRidsTree(tag: Tag) {
   let { rids } = await getTagRids(tag)
-  rids = rids.map(rid => ethers.utils.keccak256(
-    ethers.utils.toUtf8Bytes(rid.toLowerCase())
-  ).slice(0, 42));
+  // rids = rids.map(rid => ethers.utils.keccak256(
+  //   ethers.utils.toUtf8Bytes(rid.toLowerCase())
+  // ).slice(0, 42));
+  rids = rids
+    .filter(rid => rid.split(':')[0] == "0")
+    .map(rid => rid.split(':')[1]);
 
   const ridsTreeData = {}
   for (const rid of rids) ridsTreeData[rid] = 1;
@@ -174,6 +177,9 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
 
       // 检查Secret情况并生成Secret和Commitment
       const poseidon = await getPoseidon();
+
+      // relations = relations.filter(r => r.type == RelationType.Address);
+
       const noCommitmentRelations = relations.filter(r =>
         !(r.secret ||= getSecret(r.id)) || !r.commitment || !r.commitmentReceipt
       );
@@ -237,9 +243,17 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
         relations, tagState, relationTags, scannedTags, getSecretInfo
       });
 
-      const tasks = relationTags.map(([r, ts]) =>
-        ts.map(t => [t, getSecretInfo(r)] as [Tag, SecretInfo])
-      ).flat() as [Tag, SecretInfo][]
+      nonZKTagIds = [
+        ...nonZKTagIds, ...relationTags
+          .filter(([r, _]) => r.type != RelationType.Address)
+          .map(([, ts]) => ts).flat().map(t => t.id)
+      ]
+
+      const tasks = relationTags
+        .filter(([r, _]) => r.type == RelationType.Address)
+        .map(([r, ts]) =>
+          ts.map(t => [t, getSecretInfo(r)] as [Tag, SecretInfo])
+        ).flat() as [Tag, SecretInfo][]
 
       // 筛选出符合条件的任务 tasks: [Credential, SecretInfo][]
       // const tasks = secretInfos.map(
@@ -250,7 +264,7 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
       //     //   .includes(s.identifier.toLowerCase()))
       //     .map(c => [c, s] as [Credential, SecretInfo])
       // ).flat();
-      console.log("tasks", tasks);
+      console.log("tasks", tasks, nonZKTagIds);
       setTasks(tasks);
 
       setIsPreparing(false);
@@ -321,9 +335,10 @@ type SecretInfo = {
 }
 
 function getSecretInfo(relation: Relation) {
-  const rid = `${relation.type}:${relation.id.toLowerCase()}`
+  // const rid = `${relation.type}:${relation.id.toLowerCase()}`
   return {
-    identifier: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(rid)).slice(0, 42),
+    // identifier: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(rid)).slice(0, 42),
+    identifier: relation.id,
     secret: relation.secret,
     commitmentReceipt: relation.commitmentReceipt
   } as SecretInfo
