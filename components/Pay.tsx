@@ -31,7 +31,7 @@ export default function Pay({ pay, setPay }: { pay: string, setPay: Dispatch<Set
         </div>
         <div className='flex gap-2 justify-between'>
             <div className='flex gap-2 justify-end'>
-                $ {(Number(pay) * 252).toFixed(4)}
+                $ {(Number(pay) * 1937).toFixed(4)}
             </div>
             <div className='flex gap-2 justify-end'>
                 <div>Balance: {balance}</div>

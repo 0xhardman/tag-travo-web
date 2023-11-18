@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useContractWrite } from 'wagmi'
 import Pay from '@/components/Pay'
 import Receive from '@/components/Receive'
-import { Tag } from '@/type'
+import { Tag } from '@/utils/APIs'
 import Layout from '@/components/Layout'
 import Tip from '@/components/Tip'
 import { dataSwapContract } from "@/contracts/dataSwapContract";
@@ -15,14 +15,9 @@ import { merchantTotal } from '@/constrants';
 const inter = Albert_Sans({ subsets: ['latin'] })
 
 export default function Swaper() {
+  const [selectTags, setSelectTags] = useState<Tag[]>([])
   const [pay, setPay] = useState('0')
-  const [tag, setTag] = useState<Tag>({
-    id: 0,
-    tag: '',
-    description: 'Frozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurtFrozen yoghurt',
-    count: 1,
-    price: 0.01,
-  })
+
   const { data, isLoading, isSuccess, writeAsync } = useContractWrite({
     ...dataSwapContract as any,
     functionName: 'buy',
@@ -40,13 +35,18 @@ export default function Swaper() {
           <div className='left-[200px] top-[120px] rounded-xl absolute flex justify-center items-center box-content bg-[#f9f9f9] border-[4px] border-white w-[32px] h-[32px]'>
             <img src="/down-arrow.svg" alt="" />
           </div>
-          <Receive tag={tag} setTag={setTag} payUSD={Number(pay)} />
-          <Tip tag={tag} />
+          <Receive selectTags={selectTags} setSelectTags={setSelectTags} payUSD={Number(pay)} />
+          {/* <Tip tag={tag} /> */}
           <div onClick={() => {
-            console.log(tag)
+            const sorted = selectTags.map((tag) => {
+              return tag.id
+            }).sort()
+            console.log(sorted)
             writeAsync(
               //@ts-ignore
-              { value: parseEther(pay), args: [tag.id], })
+              {
+                value: parseEther(pay), args: [sorted],
+              })
           }} className='w-full cursor-pointer rounded-[18px] bg-[#1f7f94] text-[20px] text-white h-[58px] flex justify-center items-center'>
             Swap
           </div>

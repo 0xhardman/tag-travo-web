@@ -40,6 +40,16 @@ export const GetDataToSign = get<{ // 请求方式：GET
     data: string // 要签名的数据
 }>("/api/sign"); // 定义路由
 
+export const GetBuyRecord = get<{ // 请求方式：GET
+    address: string, // 要签名的地址
+}, {
+    keyCounts: {
+        "key": string,
+        "tagIds": string[],
+        "count": number
+    }[] // 要签名的数据
+}>("/api/swap/buyKeys/:address"); // 定义路由
+
 /**
  根据传入的签名信息验证签名
  **/

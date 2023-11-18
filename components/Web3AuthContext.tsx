@@ -196,20 +196,21 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
         async () => {
             const info = await web3authPack?.getUserInfo() as { eoa: string }
             setAddress(info?.eoa)
-            console.log(info)
         }
     }, [web3authPack])
     useEffect(() => {
         const token = getLocalStorage('token-login')
-        console.log(user)
         if (token && Object.keys(user).length == 0) {
-            console.log(token)
             login()
         }
 
     }, [])
     useEffect(() => {
         (async () => {
+            if (router.pathname.startsWith('/merchant')) {
+                console.log("merchant")
+                return
+            }
             const combineRelation = [...relations, ...web3BioRelations]
             if (combineRelation.length == 0) return
             const allTags = await GetTags({})
