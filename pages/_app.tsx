@@ -42,7 +42,7 @@ export const bnbTest = {
 }
 
 const { chains, publicClient } = configureChains(
-  [scrollSepolia, bnbTest],
+  [scrollSepolia],
   [
     // alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
     publicProvider()

@@ -1,6 +1,7 @@
 import clsx from "clsx"
 import { Dispatch, useState, SetStateAction, useEffect, use } from "react"
 import { useAccount, useBalance, useEnsAddress } from "wagmi"
+import { mainnet } from "wagmi"
 
 export default function Pay({ pay, setPay }: { pay: string, setPay: Dispatch<SetStateAction<string>> }) {
     // const [pay, setPay] = useState('0')
@@ -24,8 +25,8 @@ export default function Pay({ pay, setPay }: { pay: string, setPay: Dispatch<Set
                 setPay(e.target.value)
             }} /></div>
             <div className='px-[4px] flex justify-start items-center shadow-md border border-[#22222222] gap-2 w-[107px] h-[34px] bg-white rounded-full'>
-                <img src="/bnb.svg" alt="" />
-                <span className='text-[18px] font-semibold text-black'>tBNB</span>
+                <img className="w-[20px] h-[20px]" src={'/eth.png'} alt="" />
+                <span className='text-[18px] font-semibold text-black'>ETH</span>
             </div>
         </div>
         <div className='flex gap-2 justify-between'>
