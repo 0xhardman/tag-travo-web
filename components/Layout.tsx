@@ -14,7 +14,9 @@ export default function Layout({ children, current, total, hideConnectWallet = f
     // }, [router])
     return <div className=''>
         <div className='flex justify-between items-center w-screen h-[70px] border-b px-[20px]'>
-            <div className='flex gap-4 items-center'>
+            <div onClick={() => {
+                router.push('/')
+            }} className='flex gap-4 items-center cursor-pointer'>
                 <div className='flex gap-2'>
                     <img className='w-[30px]' src="/logo-short.svg" alt="" />
                     <div className='text-[20px] text-[#008192] font-bold'>Data2Swap</div>
