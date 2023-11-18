@@ -50,7 +50,7 @@ const { chains, publicClient } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: 'Data2Swap',
+  appName: 'TagTrove',
   projectId: '8e679bafa7f56ef5cbe81fb58f206ff3',
   chains
 });

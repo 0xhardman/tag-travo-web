@@ -19,7 +19,7 @@ export default function Layout({ children, current, total, hideConnectWallet = f
             }} className='flex gap-4 items-center cursor-pointer'>
                 <div className='flex gap-2'>
                     <img className='w-[30px]' src="/logo-short.svg" alt="" />
-                    <div className='text-[20px] text-[#008192] font-bold'>Data2Swap</div>
+                    <div className='text-[20px] text-[#008192] font-bold'>TagTrove</div>
                 </div>
             </div>
             <div className='flex justify-spacing items-center gap-8 text-[#7d7d7d]'>
