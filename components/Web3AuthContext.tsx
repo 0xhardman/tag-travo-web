@@ -23,6 +23,8 @@ import { Tag } from "@/utils/APIs";
 import { StringUtils } from "@/utils/StringUtils";
 import { SignType } from "@/type";
 import { useRouter } from "next/router";
+import {useGenerateZKProofs} from "@/hooks/zk/useGenerateZKProofs";
+import {SignInfo} from "@/hooks/useSign";
 const web3AuthConfig: Web3AuthConfig = {
     txServiceUrl: 'https://safe-transaction-goerli.safe.global'
 }
@@ -56,13 +58,22 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
     const [message, setMessage] = useState('')
     const [open, setOpen] = useState(false)
     const [web3authPack, setWeb3authPack] = useState<Web3AuthModalPack | null>(null);
-    const [web3BioRelations, setWeb3BioRelations] = useState<Relation[]>([]);
     const [user, setUser] = useState<User>({} as User);
+
     const [relations, setRelations] = useState<Relation[]>([]);
+    const [web3BioRelations, setWeb3BioRelations] = useState<Relation[]>([]);
+
     const [tags, setTags] = useState<Tag[]>([])
     const [type, setType] = useState<SignType>('login' as SignType)
+
     const [provider, setProvider] = useState<IProvider | null>(null);
     const [address, setAddress] = useState<string>("");
+
+    const {
+        generateZKProofs, mint, progress,
+        isPreparing, isGenerating, isMinting
+    } = useGenerateZKProofs(user, [...relations, ...web3BioRelations])
+
     const modalConfig = {
         [WALLET_ADAPTERS.TORUS_EVM]: {
             label: 'torus',
@@ -146,25 +157,27 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
         setOpen(false);
     };
     const handleSignConfirm = useCallback(async () => {
-        const signature = await sign(message)
+        const signature: string = await sign(message)
         if (signature == "error") {
             console.log("sig error")
         }
+        const signInfo = { address, params: { timestamp }, type, signature }
         switch (type) {
             case 'login':
-                const { key } = await VerifySign({ address, params: { timestamp }, type: 'login', signature })
+                const { key } = await VerifySign(signInfo)
                 setupToken(key, 'login', true)
                 await login();
                 router.push('aggregator')
                 break;
             case 'zkproof':
                 console.log("zkproof")
+                await generateZKProofs(address, signInfo as SignInfo<"zkproof">);
+                await mint(signInfo);
+                // TODO: ZKProof完了做什么？
+                break;
         }
-
         setMessage("")
         setOpen(false)
-
-
     }, [type, address, timestamp, message])
     useEffect(() => {
         (

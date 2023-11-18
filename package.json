@@ -15,6 +15,7 @@
     "@rainbow-me/rainbowkit": "^1.2.0",
     "@safe-global/auth-kit": "^1.2.1",
     "@sismo-core/crypto": "^1.2.0",
+    "@sismo-core/kv-merkle-tree": "^1.1.1",
     "@web3auth/base": "^7.1.0",
     "@web3auth/modal": "^7.1.1",
     "@web3auth/openlogin-adapter": "^7.1.1",
