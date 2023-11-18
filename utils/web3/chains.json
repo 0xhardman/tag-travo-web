@@ -28,5 +28,15 @@
     "url": "wss://eth-mainnet.g.alchemy.com/v2/rWhMTyKLUgQJWfuT-nisaLaFezXr1Tsr",
     "explorer": "https://etherscan.io",
     "chainId": 1
+  },
+  "scroll": {
+    "url": "https://rpc.scroll.io",
+    "explorer": "https://scrollscan.com",
+    "chainId": 534352
+  },
+  "scroll-test": {
+    "url": "https://sepolia-rpc.scroll.io",
+    "explorer": "https://sepolia.scrollscan.com",
+    "chainId": 534351
   }
 }

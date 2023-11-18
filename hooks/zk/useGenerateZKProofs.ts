@@ -5,14 +5,11 @@ import { SignInfo, useSign } from "@/hooks/useSign";
 import {getPoseidon, poseidon} from "@/utils/PoseidonUtils";
 import { SnarkProof } from "@/hooks/zk/core/snark-proof";
 import { AddressTreeHeight, HydraS1Prover, RegistryTreeHeight } from "@/hooks/zk/core/hydra-s1-prover";
-import { authPost } from "@/utils/AuthUtils";
+import {authPost, authPut} from "@/utils/AuthUtils";
 import {addrEq, addrInclude} from "@/utils/AddressUtils";
-import { PromiseUtils } from "@/utils/PromiseUtils";
 import { getContract } from "@/utils/web3/ContractFactory";
 
 import "./abis/ZKProfile"
-import { chain, chainName } from "@/utils/web3/ETHInstance";
-import {StringUtils} from "@/utils/StringUtils";
 import {GetGetScanResultRes, GetScanResult, GetTags, Tag} from "@/utils/APIs";
 import {useState} from "react";
 import {useChainId} from "wagmi";
@@ -21,7 +18,7 @@ import {getLocalStorage, getOrSetLocalStorage} from "@/utils/StorageUtils";
 import {BigNumber, ethers} from "ethers";
 import {removeDuplicates} from "@/utils/ArrayUtils";
 
-export const PushCommitment = put<{
+export const PushCommitment = authPut<{
   relationType: RelationType,
   relationId: string,
   commitment: string
@@ -30,7 +27,14 @@ export const PushCommitment = put<{
   commitmentReceipt: string[]
 }>("/api/user/commitment");
 
-export const PushMintCommitment = put<{
+export const PushCommitments = authPut<{
+  relations: {id: string, type: RelationType}[],
+  commitments: string[]
+}, {
+  relations: Relation[]
+}>("/api/user/commitments");
+
+export const PushMintCommitment = authPut<{
   signInfo: SignInfo<"zkproof">,
   commitment: string
 }, {
@@ -38,29 +42,22 @@ export const PushMintCommitment = put<{
   commitmentReceipt: string[]
 }>("/api/user/mint/commitment");
 
-export const PushCommitments = put<{
-  relations: {id: string, type: RelationType}[],
-  commitments: string[]
-}, {
-  relations: Relation[]
-}>("/api/user/commitments");
-
 export const GetEddsaAccountPubKey = get<{},
   string[]
->("/api/scan/pubKey");
+>("/api/tag/pubKey");
 
 export const GetRegistryRoot = get<{},
   string
->("/api/scan/registryRoot");
+>("/api/tag/registryRoot");
 
 export const MintSBT = authPost<{
   signInfo: SignInfo
   snarkProofs: SnarkProof[]
-  // tagIds: string[]
+  tagIds: string[]
 }, {
   tokenId: string
   txHash: string
-}>("/api/scan/mint");
+}>("/api/tag/mint");
 
 const tagState = {
   tags: [], scanResult: {} as GetGetScanResultRes
@@ -68,13 +65,15 @@ const tagState = {
 
 export async function getTagRids(tag: Tag) {
   return {
-    rids: tagState.scanResult[tag.addressesRoot],
+    rids: tagState.scanResult.rootResults[tag.addressesRoot],
     addressesRoot: tag.addressesRoot
   }
 }
 async function getRidsTree(tag: Tag) {
   let { rids } = await getTagRids(tag)
-  rids = rids.map(rid => ethers.utils.keccak256(ethers.utils.toUtf8Bytes(rid)));
+  rids = rids.map(rid => ethers.utils.keccak256(
+    ethers.utils.toUtf8Bytes(rid.toLowerCase())
+  ).slice(0, 42));
 
   const ridsTreeData = {}
   for (const rid of rids) ridsTreeData[rid] = 1;
@@ -124,9 +123,10 @@ export function getCommitmentSync(poseidon, relationId: string, user?: User, ind
 
 export function calcTags(relations: Relation[], tags: Tag[], scanResult: GetGetScanResultRes) {
   const rids = relations.map(r => `${r.type}:${r.id}`);
+  const rootResults = scanResult.rootResults
 
   const tagsGroup = rids.map(rid => tags.filter(
-    t => addrInclude(scanResult[t?.addressesRoot] || [], rid)
+    t => addrInclude(rootResults[t?.addressesRoot] || [], rid)
   ))
   const relationTags = tagsGroup.map((ts, i) => [relations[i], ts] as [Relation, Tag[]])
   const scannedTags = removeDuplicates(tagsGroup.flat())
@@ -163,7 +163,7 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
   const [tasks, setTasks] = useState<[Tag, SecretInfo][]>([]);
 
   const generateZKProofs = async (
-    destination, signInfo: SignInfo<"zkproof">
+    destination, signInfo: SignInfo<"zkproof">, nonZKTagIds = []
   ) => {
     setSnarkProofs(null);
     setMintResult(null);
@@ -193,6 +193,9 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
         const r = relations.find(r2 => addrEq(r2.id, cr.id) && r2.type == cr.type);
         r.commitmentReceipt = cr.commitmentReceipt;
       })
+      console.log("generateZKProof", {
+        relations, noCommitmentRelations, pushingRelations, committedRelations
+      });
 
       // 获取需要验证的所有账号的SecretInfo
       // const secretInfos = relations.map(r => getSecretInfo(r));
@@ -201,6 +204,9 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
       // 获取Destination账号的SecretInfo
       const { secret, commitment } = await getCommitment(destination, user);
 
+      console.log("getCommitment", {
+        secret, commitment, destination, user
+      });
       // const zkSignInfo = await sign("zkproof", { commitment });
       const { commitmentMapperPubKey, commitmentReceipt } =
         await PushMintCommitment({ signInfo, commitment });
@@ -225,7 +231,12 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
 
       const prover = new HydraS1Prover(registryTree, pubKey);
 
-      const {relationTags} = calcTags(relations, tagState.tags, tagState.scanResult)
+      const {relationTags, scannedTags} = calcTags(relations, tagState.tags, tagState.scanResult)
+
+      console.log("calcTags", {
+        relations, tagState, relationTags, scannedTags, getSecretInfo
+      });
+
       const tasks = relationTags.map(([r, ts]) =>
         ts.map(t => [t, getSecretInfo(r)] as [Tag, SecretInfo])
       ).flat() as [Tag, SecretInfo][]
@@ -266,6 +277,8 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
       }
       setSnarkProofs(snarkProofs);
 
+      await mint(signInfo, snarkProofs, nonZKTagIds);
+
     } finally {
       // setProgress(0);
       setIsPreparing(false)
@@ -273,13 +286,13 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
     }
   }
 
-  const mint = async (signInfo) => {
+  const mint = async (signInfo, snarkProofs, nonZKTagIds: string[]) => {
     setMintResult(null);
 
     try {
       setIsMinting(true);
 
-      setMintResult(await MintSBT({ signInfo, snarkProofs }));
+      setMintResult(await MintSBT({ signInfo, snarkProofs, tagIds: nonZKTagIds }));
 
       // const { userCredentials, zkProofs } = await GetUserCredentials();
       // userRelation.user.mintAddress = mintSignInfo.address;
@@ -294,7 +307,7 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
 
   return {
     generateZKProofs, // 生成ZKP
-    mint, // ZKP生成出来后（snarkProofs有值）调用此函数进行Mint操作
+    // mint, // ZKP生成出来后（snarkProofs有值）调用此函数进行Mint操作
     isPreparing, isGenerating, isMinting, // 状态
     progress, // 进度 0 ~ 1
     tasks, // 生成ZKP任务列表
@@ -308,8 +321,9 @@ type SecretInfo = {
 }
 
 function getSecretInfo(relation: Relation) {
+  const rid = `${relation.type}:${relation.id.toLowerCase()}`
   return {
-    identifier: relation.id,
+    identifier: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(rid)).slice(0, 42),
     secret: relation.secret,
     commitmentReceipt: relation.commitmentReceipt
   } as SecretInfo
