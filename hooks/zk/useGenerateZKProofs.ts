@@ -53,7 +53,7 @@ export const GetRegistryRoot = get<{},
 export const MintSBT = authPost<{
   signInfo: SignInfo
   snarkProofs: SnarkProof[]
-  // tagIds: string[]
+  tagIds: string[]
 }, {
   tokenId: string
   txHash: string
@@ -161,7 +161,7 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
   const [tasks, setTasks] = useState<[Tag, SecretInfo][]>([]);
 
   const generateZKProofs = async (
-    destination, signInfo: SignInfo<"zkproof">
+    destination, signInfo: SignInfo<"zkproof">, nonZKTagIds = []
   ) => {
     setSnarkProofs(null);
     setMintResult(null);
@@ -275,7 +275,7 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
       }
       setSnarkProofs(snarkProofs);
 
-      await mint(signInfo, snarkProofs);
+      await mint(signInfo, snarkProofs, nonZKTagIds);
 
     } finally {
       // setProgress(0);
@@ -284,13 +284,13 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
     }
   }
 
-  const mint = async (signInfo, snarkProofs) => {
+  const mint = async (signInfo, snarkProofs, nonZKTagIds: string[]) => {
     setMintResult(null);
 
     try {
       setIsMinting(true);
 
-      setMintResult(await MintSBT({ signInfo, snarkProofs }));
+      setMintResult(await MintSBT({ signInfo, snarkProofs, tagIds: nonZKTagIds }));
 
       // const { userCredentials, zkProofs } = await GetUserCredentials();
       // userRelation.user.mintAddress = mintSignInfo.address;
