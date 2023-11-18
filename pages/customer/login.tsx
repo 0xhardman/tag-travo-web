@@ -15,7 +15,7 @@ import { Button, Typography } from '@mui/material';
 import CustomerLayout from '@/components/CustomerLayout';
 import { Web3AuthContext } from '@/components/Web3AuthContext';
 import { useRouter } from 'next/router';
-import { GetDataToSign, VerifySign } from '@/utils/APIs';
+import { GetDataToSign, Login, VerifySign } from '@/utils/APIs';
 import { sign } from 'crypto';
 import { StringUtils } from '@/utils/StringUtils';
 import { set } from 'react-hook-form';
@@ -29,7 +29,7 @@ const web3AuthModalPack = new Web3AuthModalPack(web3AuthConfig)
 
 const inter = Albert_Sans({ subsets: ['latin'] })
 export default function Test() {
-    const { login, address, sign } = useContext(Web3AuthContext)
+    const { login, address, sign, setRelations, setUser, setWeb3BioRelations } = useContext(Web3AuthContext)
     const [message, setMessage] = useState('')
     const [timestamp, setTimestamp] = useState('')
     const [open, setOpen] = useState(false)
@@ -40,8 +40,7 @@ export default function Test() {
         const timestamp = Date.now().toString();
         setTimestamp(timestamp)
         console.log(timestamp)
-        let params = { timestamp: timestamp }
-        const res = StringUtils.fillData2Str(data.data, params, false)
+        const res = StringUtils.fillData2Str(data.data, { timestamp: timestamp }, false)
 
         setMessage(res)
     }
@@ -53,6 +52,12 @@ export default function Test() {
         const { key } = await VerifySign({ address, params: { timestamp }, type: 'login', signature })
         setupToken(key, 'login', true)
         console.log(key)
+        const userRelations = await Login({})
+        console.log(userRelations)
+        setRelations(userRelations.relations)
+        setUser(userRelations.user)
+        setWeb3BioRelations(userRelations.web3BioRelations)
+
         router.push('aggregator')
 
     }
@@ -60,6 +65,11 @@ export default function Test() {
     const handleClickOpen = () => {
         setOpen(true);
     };
+
+    const handleClear = () => {
+        localStorage.clear();
+        window.location.reload()
+    }
 
     const handleClose = () => {
         setOpen(false);
@@ -107,6 +117,10 @@ export default function Test() {
                 <Button onClick={() => { login() }} fullWidth variant='outlined' size='large'>Login with AA</Button>
                 <Typography variant='h4' fontWeight={600} color="#008192">{address}</Typography>
                 <Button onClick={() => { handleSign() }} fullWidth variant='outlined' size='large'>Sign In</Button>
+                <Button onClick={() => {
+                    handleClear()
+                }} fullWidth variant='outlined' size='large'>Clear</Button>
+
             </div>
         </main>
     </CustomerLayout>

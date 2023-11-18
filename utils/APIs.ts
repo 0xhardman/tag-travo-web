@@ -1,26 +1,8 @@
 import { SignType } from "@/type";
 import { get, post } from "./APIUtils";
-import { authPut } from "./AuthUtils";
+import { authPost, authPut } from "./AuthUtils";
 import { SignInfo } from "@/hooks/useSign";
-
-// export const SendEmailCode = post<{
-//     email: string,
-//     type: 'bind'
-// }>("/api/user/email/send");
-
-// export const BindEmail = authPut<{
-//     email: string,
-//     code: string
-// }>("/api/user/email/bind");
-
-// export const IsNewEmailValid = get<{
-//     email: string,
-// }, boolean>("/api/user/email/valid");
-
-// export const IsNewRelationValid = get<{
-//     id: string, type?: number
-// }, boolean>("/api/user/relation/valid");
-
+import { User, UserRelation } from "./interfaces";
 
 /**
  根据传入的type获取要签名的数据
@@ -39,3 +21,35 @@ export const VerifySign = post<SignInfo, // 签名信息
     {
         key: string // 验证签名后返回的密钥
     }>("/api/sign/verify");
+
+export interface BindAddressResponse {
+    relation: Relation;
+    web3BioRelations: Relation[];
+    workId: string;
+}
+
+/**
+ * Relation
+ */
+export interface Relation {
+    commitment: string;
+    commitmentReceipt: string[];
+    id: string;
+    name: string;
+    state: number;
+    type: number;
+    userId: string;
+}
+
+export interface NewUserRelation {
+    user: User,
+    relations: Relation[],
+    web3BioRelations: Relation[]
+    // zkProofs: ZKProof[]
+}
+
+export const BindAddress = authPut<{ signInfo: SignInfo }, // 签名信息
+    BindAddressResponse>("/api/user/address");
+
+
+export const Login = authPost<{}, NewUserRelation>("/api/user/login");

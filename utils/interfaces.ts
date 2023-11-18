@@ -1,5 +1,5 @@
 import { SignInfo } from "@/hooks/useSign";
-import {SnarkProof} from "@/hooks/zk/core/snark-proof";
+import { SnarkProof } from "@/hooks/zk/core/snark-proof";
 
 export type User = {
   id: string,
@@ -106,24 +106,24 @@ export type ValueCompare = "eq" | "ne" | "lt" | "lte" | "gt" | "gte" | "in" | "n
  **/
 export type Rule<T extends ScanType = ScanType>
   = DataWithPayload<T, RulePayloads, {
-  // type: T
-  // payload?: Payload<T, RulePayloads>
-  typeName: string
+    // type: T
+    // payload?: Payload<T, RulePayloads>
+    typeName: string
 
-  name: string
-  detail: string
+    name: string
+    detail: string
 
-  chain?: Chain
+    chain?: Chain
 
-  scanWorkName?: string
-  scanWorkId?: string
+    scanWorkName?: string
+    scanWorkId?: string
 
-  timestamp?: number
-  value?: number | number[]
-  compare?: ValueCompare
+    timestamp?: number
+    value?: number | number[]
+    compare?: ValueCompare
 
-  resultsFilter?: string
-}>;
+    resultsFilter?: string
+  }>;
 
 export type Payload<T extends number | string,
   Payloads extends Record<string | number, any>> =

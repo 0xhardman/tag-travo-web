@@ -8,8 +8,8 @@ import { ethers } from 'ethers';
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { CommonPrivateKeyProvider } from "@web3auth/base-provider";
 import { set } from "react-hook-form";
-import { GetDataToSign } from "@/utils/APIs";
-
+import { GetDataToSign, Relation } from "@/utils/APIs";
+import { User } from "@/utils/interfaces";
 const web3AuthConfig: Web3AuthConfig = {
     txServiceUrl: 'https://safe-transaction-goerli.safe.global'
 }
@@ -20,7 +20,13 @@ const web3AuthConfig: Web3AuthConfig = {
 interface Web3AuthContextType {
     address: string,
     login: () => void,
-    sign: (message: string) => string
+    sign: (message: string) => Promise<string>,
+    web3BioRelations: Relation[],
+    setWeb3BioRelations: (relations: Relation[]) => void,
+    relations: Relation[],
+    setRelations: (relations: Relation[]) => void,
+    user: User,
+    setUser: (user: User) => void
 }
 
 export const Web3AuthContext = createContext({} as Web3AuthContextType);
@@ -30,6 +36,9 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
         process.env.NEXT_PUBLIC_WEB3AUTH_CLIENT_ID ??
         "BOZ_Bpk52QEjIZheU6fcq3e8ZGsHaoJizs7vbT5HPJN9cITsnR6ky2CFV3jvor_yKt42wk44sNYmPdXSfKhcSow";
     const [web3authPack, setWeb3authPack] = useState<Web3AuthModalPack | null>(null);
+    const [web3BioRelations, setWeb3BioRelations] = useState<Relation[]>([]);
+    const [user, setUser] = useState<User>({} as User);
+    const [relations, setRelations] = useState<Relation[]>([]);
     const [provider, setProvider] = useState<IProvider | null>(null);
     const [address, setAddress] = useState<string>("");
     const modalConfig = {
@@ -120,6 +129,6 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
     }, [web3authPack])
     // const login = () => { console.log(666) }
     return <Web3AuthContext.Provider value={{
-        address, login, sign
+        address, login, sign, web3BioRelations, setWeb3BioRelations, relations, setRelations, user, setUser
     }}>{children}</Web3AuthContext.Provider >
 }
