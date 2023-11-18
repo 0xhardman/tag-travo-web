@@ -96,7 +96,7 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
     };
     const options: Web3AuthOptions = {
         clientId,
-        web3AuthNetwork: "testnet",
+        web3AuthNetwork: "sapphire_devnet",
         chainConfig: chainConfig,
         uiConfig: {
             // theme: 'dark',
