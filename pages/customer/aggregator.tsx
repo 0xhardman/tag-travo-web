@@ -57,7 +57,7 @@ export default function Test() {
                         <div className='flex justify-between items-center'>
                             <Typography variant='h4' fontWeight='600' color={"#008093"}>Web3 Address:</Typography>
                             <MyButton onClick={() => { }}>
-                                Add +
+                                Add <img className='ml-4 rotate-45 w-[12px]' src="/cross.svg" alt="" />
                             </MyButton>
                         </div>
                         <div className='flex flex-wrap justify-start gap-x-5 gap-y-2 py-4'>
@@ -94,16 +94,50 @@ export default function Test() {
                         <div className='flex justify-between items-center mt-8'>
                             <Typography variant='h4' fontWeight='600' color={"#008093"}>Exported Data:</Typography>
                         </div>
+                        <div className='flex  flex-wrap justify-start gap-x-5 gap-y-2 py-4'>
+                            <div className='flex flex-col w-[180px] justify-between items-start p-6 gap-2 border rounded-md overflow-hidden'>
+                                <div className='flex rounded-xl w-[45px] h-[45px] justify-center items-center bg-black' style={{
+                                    boxShadow: '-10px -10px 80px  #000000',
 
+                                }}><img width={30} height={30} className='' src="/worldcoin.svg" alt="" /></div>
+                                <div>
+                                    <div className='font-bold capitalize text-black'>World Coin</div>
+                                    <div className='border text-center mt-4 px-2 py-1 text-white bg-black rounded-lg'>Verify</div>
+                                </div>
+                            </div>
+                            <div className='flex flex-col w-[180px] justify-between items-start p-6 gap-2 border rounded-md overflow-hidden'>
+                                <div className='flex rounded-xl w-[45px] h-[45px] justify-center items-center bg-[#00a2e1]' style={{
+                                    boxShadow: '-10px -10px 80px  #00a2e1',
+
+                                }}><img width={30} height={30} className='' src="/twitter.svg" alt="" /></div>
+                                <div>
+                                    <div className='font-bold capitalize text-black'>Wold Coin</div>
+                                    <div className='border text-center mt-4 px-2 py-1 text-white bg-[#00a2e1] rounded-lg'>Upload</div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
                 <div className='border mx-4'></div>
-                <div>
+                <div className='flex flex-col justify-between w-[40%]'>
+                    <div className='flex flex-wrap justify-start gap-x-3 gap-y-2'>
+                        {
+                            data.map((value, index) => {
+                                return <div key={index} className='relative border flex justify-between items-center py-2 px-4 text-[18px] rounded-lg'>
+                                    {value}
+                                    <div className='absolute flex justify-center text-white  rounded-full items-center  -top-[6px] -right-[6px] w-[20px] h-[20px] bg-[#008093]'>
+                                        <img width={10} height={10} src="/cross.svg" alt="" />
+                                    </div>
+
+                                </div>
+                            })
+                        }
+                    </div>
                     <MyButton onClick={() => { }}>
-                        Send!
+                        Encrypt
                     </MyButton>
                 </div>
-
             </div>
         </main>
         {/* <Grid container spacing={2}>
