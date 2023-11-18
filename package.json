@@ -14,6 +14,7 @@
     "@mui/material": "^5.14.17",
     "@rainbow-me/rainbowkit": "^1.2.0",
     "@safe-global/auth-kit": "^1.2.1",
+    "@sismo-core/crypto": "^1.2.0",
     "@web3auth/base": "^7.1.0",
     "@web3auth/modal": "^7.1.1",
     "@web3auth/openlogin-adapter": "^7.1.1",
@@ -29,6 +30,7 @@
     "wagmi": "^1.4.6"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

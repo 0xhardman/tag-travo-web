@@ -44,10 +44,9 @@ export default function Swaper() {
           <Tip tag={tag} />
           <div onClick={() => {
             console.log(tag)
-            writeAsync({
-              value: parseEther(pay),
-              args: [tag.id],
-            })
+            writeAsync(
+              //@ts-ignore
+              { value: parseEther(pay), args: [tag.id], })
           }} className='w-full cursor-pointer rounded-[18px] bg-[#1f7f94] text-[20px] text-white h-[58px] flex justify-center items-center'>
             Swap
           </div>

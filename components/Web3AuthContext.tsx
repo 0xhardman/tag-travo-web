@@ -5,7 +5,7 @@ import { CHAIN_NAMESPACES, IProvider, WALLET_ADAPTERS } from "@web3auth/base";
 import { OpenloginAdapter } from '@web3auth/openlogin-adapter'
 import { useCallback, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
-
+import { ExternalProvider } from '@ethersproject/providers';
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { CommonPrivateKeyProvider } from "@web3auth/base-provider";
 import { setupToken } from '@/utils/AuthUtils';
@@ -42,7 +42,7 @@ interface Web3AuthContextType {
     user: User,
     setUser: (user: User) => void,
     tags: Tag[],
-    handleSign: (type: SignType) => void
+    handleSign: (type?: SignType) => void
 }
 
 export const Web3AuthContext = createContext({} as Web3AuthContextType);
@@ -87,10 +87,10 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
         clientId,
         web3AuthNetwork: "testnet",
         chainConfig: chainConfig,
-        // uiConfig: {
-        //     // theme: 'dark',
-        //     loginMethodsOrder: ['google', 'facebook']
-        // }
+        uiConfig: {
+            // theme: 'dark',
+            loginMethodsOrder: ['google', 'facebook']
+        }
     }
     const privateKeyProvider = new CommonPrivateKeyProvider({
         config: { chainConfig },
@@ -108,8 +108,7 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
     const sign = useCallback(async (message: string) => {
         try {
             const p = web3authPack?.getProvider()
-            console.log(p)
-            const provider = new ethers.providers.Web3Provider(p)
+            const provider = new ethers.providers.Web3Provider(p as ExternalProvider)
             const signer = await provider.getSigner()
             // const message = 'hello world'
             // const address = '0x7FD69E691F8b8f7Fa416CDCaFD41eDB32E0Eb3c8'
@@ -174,7 +173,7 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
                 const web3auth = new Web3Auth(options);
                 web3auth.configureAdapter(openloginAdapter);
                 await web3auth.initModal();
-                const res = await web3AuthModalPack.init({ options, adapters: [openloginAdapter], modalConfig })
+                const res = await web3AuthModalPack.init({ options: options as any, adapters: [openloginAdapter as any], modalConfig })
                 setWeb3authPack(web3AuthModalPack)
                 console.log(res)
             }
@@ -182,7 +181,7 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
     }, [])
     useEffect(() => {
         async () => {
-            const info = await web3authPack?.getUserInfo()
+            const info = await web3authPack?.getUserInfo() as { eoa: string }
             setAddress(info?.eoa)
             console.log(info)
         }

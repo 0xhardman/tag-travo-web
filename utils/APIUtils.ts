@@ -1,3 +1,4 @@
+
 import axios, { AxiosError, AxiosRequestConfig, Method } from "axios";
 import { StringUtils } from "@/utils/StringUtils";
 
@@ -5,6 +6,7 @@ const Host = "/"
 
 const DefaultTimeout = 120000;
 
+//@ts-ignore
 export type Itf<I = any, O = any> = (data?: I, headers?) => Promise<O>
 
 export function post<I = any, O = any>(
@@ -46,7 +48,7 @@ export class RequestError<T = any> extends Error {
       this.code : this.status;
     return `Request Error: ${code}`;
   }
-
+  //@ts-ignore
   constructor(status, code, message, payload?: T) {
     super();
     this.status = status;
@@ -123,12 +125,11 @@ export async function request<T = any>(
   const res = response?.data?.data ||
     "payload" in response?.data ?
     response?.data.payload : response?.data;
-
+  //@ts-ignore
   if (status >= 200 && status < 300 &&
     code === 0 || code === 200) return res;
-
-  const message = response.data?.message ||
-    response.data?.reason || response.statusText;
+  //@ts-ignore
+  const message = response.data?.message || response.data?.reason || response.statusText;
   // Toaster("error", message)
   throw new RequestError(status, code, message, res);
 }

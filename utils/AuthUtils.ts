@@ -60,8 +60,9 @@ class Token {
   // public static Duration = 0;
   // // TOKEN更新时间（测试30秒）
   // public static UpdateDuration = 0;
-
+  //@ts-ignore
   public value: string;
+  //@ts-ignore
   public data: Payload;
 
   /**
@@ -71,12 +72,14 @@ class Token {
     return !this.isOutOfDate() &&
       this.data.count == null ||
       this.data.count == -1 ||
+      //@ts-ignore
       this.data.count > 0;
   }
 
   // 是否过时
   public isOutOfDate() {
     const now = Date.now();
+    //@ts-ignore
     return now >= this.data.exp * 1000;
   }
 
@@ -84,6 +87,7 @@ class Token {
     if (token instanceof Token) return token;
     const res = new Token();
     res.value = token;
+    //@ts-ignore
     res.data = JWT.decode(token);
     return res;
   }

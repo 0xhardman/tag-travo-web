@@ -3,7 +3,6 @@ import { get, post } from "@/utils/APIUtils";
 import { StringUtils } from "@/utils/StringUtils";
 import { signMessage } from 'wagmi/actions'
 import { DefaultTokenType, clearToken, getToken, setupToken } from "@/utils/AuthUtils";
-import Toaster from "@/components/MyToaster";
 
 import { useEffect } from "react";
 
@@ -49,17 +48,17 @@ export function useSign() {
     return await VerifySign({ address, params, type, signature });
   }
   const doSign = async <T extends SignType = SignType, P = any>(
-    type: T, params: P & {timestamp: string} = {} as P & {timestamp: string},
+    type: T, params: P & { timestamp: string } = {} as P & { timestamp: string },
     verify = true) => {
 
-    let data = await getData2Sign(address, type);
+    let data = await getData2Sign(address as any, type);
     params.timestamp = Date.now().toString();
     data = StringUtils.fillData2Str(data, params, false);
 
     console.error("request sign", { address, data });
     const signature = await signMessage({ message: data });
     console.log("signMessage", { data, signature });
-    const signInfo: SignInfo<T, P> = { address, params, type, signature };
+    const signInfo: SignInfo<T, P> = { address: address as any, params, type, signature };
     if (!verify) return signInfo;
 
     const { key } = await verifySign(signInfo);

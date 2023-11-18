@@ -2,6 +2,7 @@ export function removeDuplicates<T>(arr: T[]) {
   // return [...new Set(arr)];
   return arr.filter((item, index) => arr.indexOf(item) === index);
 }
+//@ts-ignore
 export function splitArray<T>(arr: T[], chunkSize) {
   const res: T[][] = [];
   for (let i = 0; i < arr.length; i += chunkSize)
@@ -24,6 +25,7 @@ export function customGroupBy<T>(
     const key = keyFunc(e);
     // @ts-ignore
     res[key] ||= []
+    //@ts-ignore
     res[key].push(e);
     return res;
   }, {});

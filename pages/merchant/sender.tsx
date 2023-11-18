@@ -269,9 +269,8 @@ export default function Sender() {
           <div onClick={handleSubmit(
             (data) => {
               writeAsync(
-                {
-                  args: [data.tag, data.title, data.content],
-                }
+                //@ts-ignore
+                { args: [data.tag, data.title, data.content], }
               )
             }
           )} className='cursor-pointer self-end w-[140px] rounded-[18px] bg-[#1f7f94] text-[20px] text-white h-[58px] flex justify-center items-center'>
