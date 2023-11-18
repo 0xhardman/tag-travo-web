@@ -8,9 +8,10 @@ import { ethers } from 'ethers';
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { CommonPrivateKeyProvider } from "@web3auth/base-provider";
 import { set } from "react-hook-form";
-import { GetDataToSign, Login, Relation } from "@/utils/APIs";
+import { GetDataToSign, GetScanResult, GetTags, Login, Relation } from "@/utils/APIs";
 import { User } from "@/utils/interfaces";
 import { getLocalStorage } from "@/utils/StorageUtils";
+import { Tag } from "@/utils/APIs";
 const web3AuthConfig: Web3AuthConfig = {
     txServiceUrl: 'https://safe-transaction-goerli.safe.global'
 }
@@ -28,7 +29,8 @@ interface Web3AuthContextType {
     relations: Relation[],
     setRelations: (relations: Relation[]) => void,
     user: User,
-    setUser: (user: User) => void
+    setUser: (user: User) => void,
+    tags: Tag[]
 }
 
 export const Web3AuthContext = createContext({} as Web3AuthContextType);
@@ -41,6 +43,7 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
     const [web3BioRelations, setWeb3BioRelations] = useState<Relation[]>([]);
     const [user, setUser] = useState<User>({} as User);
     const [relations, setRelations] = useState<Relation[]>([]);
+    const [tags, setTags] = useState<Tag[]>([])
     const [provider, setProvider] = useState<IProvider | null>(null);
     const [address, setAddress] = useState<string>("");
     const modalConfig = {
@@ -144,7 +147,42 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
         }
 
     }, [])
+    useEffect(() => {
+        (async () => {
+            const combineRelation = [...relations, ...web3BioRelations]
+            if (combineRelation.length == 0) return
+            const allTags = await GetTags({})
+            const result = await GetScanResult({})
+            const rootSet = new Set<string>()
+            Object.keys(result.rootResults).forEach((key) => {
+                result.rootResults[key].forEach((id: string) => {
+                    combineRelation.forEach((relation) => {
+                        const combineId = relation.type + ':' + relation.id
+                        if (id.toUpperCase() == combineId.toUpperCase())
+                            rootSet.add(key)
+                    })
+                })
+            })
+            console.log(rootSet)
+            // console.log({ result, allTags })
+
+            const tags = new Set<Tag>()
+            rootSet.forEach((root) => {
+                const tag = allTags.forEach((tag) => {
+                    // console.log(tag, tag.addressesRoot, root)
+                    if (tag.addressesRoot.toUpperCase() == root.toUpperCase()) {
+                        tags.add(tag)
+                    }
+
+                })
+
+            })
+            // console.log(tags)
+            setTags(Array.from(tags) as Tag[])
+            // console.log()
+        })()
+    }, [relations, web3BioRelations])
     return <Web3AuthContext.Provider value={{
-        address, aaSignIn, login, sign, web3BioRelations, setWeb3BioRelations, relations, setRelations, user, setUser
+        address, aaSignIn, login, sign, web3BioRelations, setWeb3BioRelations, relations, setRelations, user, setUser, tags
     }}>{children}</Web3AuthContext.Provider >
 }

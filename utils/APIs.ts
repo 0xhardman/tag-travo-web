@@ -54,3 +54,50 @@ export const BindAddress = authPut<{ signInfo: SignInfo }, // 签名信息
 
 
 export const Login = authPost<{}, NewUserRelation>("/api/user/login");
+
+export const GetTags = get<{}, Tag[]>("/api/tag/tags"); // 定义路由
+
+/**
+ * Request
+ */
+
+
+/**
+ * Tag
+ */
+export interface Tag {
+    addressesRoot: string;
+    curator: string;
+    dataPower: number;
+    description: string;
+    id: string;
+    name: string;
+    rules: Rule;
+    /**
+     * "Active" | "Hidden"
+     */
+    state: string;
+    zkEnable: boolean;
+}
+
+/**
+ * Rule
+ */
+export interface Rule {
+    /**
+     * "eq" | "ne" | "lt" | "lte" | "gt" | "gte" | "in" | "notin"
+     */
+    compare: string;
+    groupName: string;
+    value: number[] | number;
+}
+
+
+export const GetScanResult = get<{}, GetGetScanResultRes>("/api/tag/scanResult"); // 定义路由
+
+export interface GetGetScanResultRes {
+    /**
+     * {[K: string]: string[]}
+     */
+    rootResults: { [key: string]: any };
+}

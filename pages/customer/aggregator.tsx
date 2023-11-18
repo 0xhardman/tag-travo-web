@@ -5,7 +5,7 @@ import { Albert_Sans } from 'next/font/google';
 import CustomerLayout from '@/components/CustomerLayout';
 import { Web3AuthContext } from '@/components/Web3AuthContext';
 import { useRouter } from 'next/router';
-import { Box, Container, Grid, Paper, Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, } from '@mui/material';
+import { Box, Container, Grid, Paper, Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, dividerClasses, } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import clsx from 'clsx';
 import { useAccount, useConnect, useDisconnect, useSignMessage } from 'wagmi'
@@ -29,21 +29,8 @@ const MyButton = ({ children, onClick }: { children: React.ReactNode, onClick: (
     </div>
 }
 const inter = Albert_Sans({ subsets: ['latin'] })
-function removeDuplicates(arr) {
-    let uniqueArr = [];
-    let idSet = new Set();
-
-    for (let obj of arr) {
-        if (!idSet.has(obj.id)) {
-            uniqueArr.push(obj);
-            idSet.add(obj.id);
-        }
-    }
-
-    return uniqueArr;
-}
 export default function Test() {
-    const { login, address: AAAddress, relations, setRelations, web3BioRelations, setWeb3BioRelations, user } = useContext(Web3AuthContext)
+    const { tags, address: AAAddress, relations, setRelations, web3BioRelations, setWeb3BioRelations, user } = useContext(Web3AuthContext)
     const [timestamp, setTimestamp] = useState('')
     const [message, setMessage] = useState('')
     const { address } = useAccount()
@@ -68,7 +55,6 @@ export default function Test() {
                 console.log(res)
             })()
         },
-
     })
     const { openConnectModal, connectModalOpen } = useConnectModal();
     const [open, setOpen] = useState(false)
@@ -85,7 +71,7 @@ export default function Test() {
         disconnect()
         setOpen(false)
     }
-    console.log({ web3BioRelations })
+
     const handleClose = () => {
         setOpen(false);
     };
@@ -218,15 +204,18 @@ export default function Test() {
                 <div className='flex flex-col justify-between w-[40%]'>
                     <div className='flex flex-wrap justify-start gap-x-3 gap-y-2'>
                         {
-                            data.map((value, index) => {
-                                return <div key={index} className='relative border flex justify-between items-center py-2 px-4 text-[30px] text-black rounded-lg'>
-                                    {value}
-                                    <div className='absolute flex justify-center text-white  rounded-full items-center  -top-[6px] -right-[6px] w-[20px] h-[20px] bg-[#008093]'>
-                                        <img width={10} height={10} src="/cross.svg" alt="" />
-                                    </div>
+                            tags.length > 0 ?
+                                tags.map((value, index) => {
+                                    return <div key={index} className='relative border flex justify-between items-center py-2 px-4 text-[30px] text-black rounded-lg'>
+                                        {value.name}
+                                        <div className='absolute flex justify-center text-white  rounded-full items-center  -top-[6px] -right-[6px] w-[20px] h-[20px] bg-[#008093]'>
+                                            <img width={10} height={10} src="/cross.svg" alt="" />
+                                        </div>
 
+                                    </div>
+                                }) : <div>
+                                    loading
                                 </div>
-                            })
                         }
                     </div>
                     <MyButton onClick={() => { }}>
