@@ -29,8 +29,21 @@ const MyButton = ({ children, onClick }: { children: React.ReactNode, onClick: (
     </div>
 }
 const inter = Albert_Sans({ subsets: ['latin'] })
+function removeDuplicates(arr) {
+    let uniqueArr = [];
+    let idSet = new Set();
+
+    for (let obj of arr) {
+        if (!idSet.has(obj.id)) {
+            uniqueArr.push(obj);
+            idSet.add(obj.id);
+        }
+    }
+
+    return uniqueArr;
+}
 export default function Test() {
-    const { login, address: AAAddress, relations, web3BioRelations, user } = useContext(Web3AuthContext)
+    const { login, address: AAAddress, relations, setRelations, web3BioRelations, setWeb3BioRelations, user } = useContext(Web3AuthContext)
     const [timestamp, setTimestamp] = useState('')
     const [message, setMessage] = useState('')
     const { address } = useAccount()
@@ -40,6 +53,18 @@ export default function Test() {
             (async () => {
                 console.log(data)
                 const res = await BindAddress({ signInfo: { address: address as string, params: { timestamp }, type: 'bind', signature: data } })
+                setRelations([...relations, res.relation])
+                const tmp = [...web3BioRelations, ...res.web3BioRelations]
+                let idSet = new Set();
+                let uniqueArr = [];
+
+                for (let obj of tmp) {
+                    if (!idSet.has(obj.id)) {
+                        uniqueArr.push(obj);
+                        idSet.add(obj.id);
+                    }
+                }
+                setWeb3BioRelations(uniqueArr)
                 console.log(res)
             })()
         },
@@ -64,7 +89,24 @@ export default function Test() {
     const handleClose = () => {
         setOpen(false);
     };
-    useEffect(() => { })
+    useEffect(() => {
+        (async () => {
+            if (Object.keys(user).length == 0) return
+            if (!address) return
+            if (relations.map((v, i) => v.id).includes(address)) {
+                console.log("Already added")
+                return
+            }
+            let data = await GetDataToSign({ address, type: 'bind' });
+            const timestamp = Date.now().toString();
+            const res = StringUtils.fillData2Str(data.data, { timestamp: timestamp }, false)
+            console.log(res)
+            const signature = await signMessage({ message: res })
+            console.log({ signature, signData })
+            // setMessage(res)
+            setTimestamp(timestamp)
+        })()
+    }, [address])
     const data = ["Addr: Uniswap Master", "Addr: Scroll User", "Github: Solidity Dev", "X: FinTech FinTech FinTech", "World Coin human"]
     const tmpAddress = "0xb15115A15d5992A756D003AE74C0b832918fAb75"
     return <CustomerLayout current='Aggregator' total={customerTotal} hideConnectWallet={false}>
