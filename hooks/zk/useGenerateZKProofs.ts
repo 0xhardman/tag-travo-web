@@ -5,7 +5,7 @@ import { SignInfo, useSign } from "@/hooks/useSign";
 import {getPoseidon, poseidon} from "@/utils/PoseidonUtils";
 import { SnarkProof } from "@/hooks/zk/core/snark-proof";
 import { AddressTreeHeight, HydraS1Prover, RegistryTreeHeight } from "@/hooks/zk/core/hydra-s1-prover";
-import { authPost } from "@/utils/AuthUtils";
+import {authPost, authPut} from "@/utils/AuthUtils";
 import {addrEq, addrInclude} from "@/utils/AddressUtils";
 import { PromiseUtils } from "@/utils/PromiseUtils";
 import { getContract } from "@/utils/web3/ContractFactory";
@@ -21,7 +21,7 @@ import {getLocalStorage, getOrSetLocalStorage} from "@/utils/StorageUtils";
 import {BigNumber, ethers} from "ethers";
 import {removeDuplicates} from "@/utils/ArrayUtils";
 
-export const PushCommitment = put<{
+export const PushCommitment = authPut<{
   relationType: RelationType,
   relationId: string,
   commitment: string
@@ -30,20 +30,20 @@ export const PushCommitment = put<{
   commitmentReceipt: string[]
 }>("/api/user/commitment");
 
-export const PushMintCommitment = put<{
+export const PushCommitments = authPut<{
+  relations: {id: string, type: RelationType}[],
+  commitments: string[]
+}, {
+  relations: Relation[]
+}>("/api/user/commitments");
+
+export const PushMintCommitment = authPut<{
   signInfo: SignInfo<"zkproof">,
   commitment: string
 }, {
   commitmentMapperPubKey: string[],
   commitmentReceipt: string[]
 }>("/api/user/mint/commitment");
-
-export const PushCommitments = put<{
-  relations: {id: string, type: RelationType}[],
-  commitments: string[]
-}, {
-  relations: Relation[]
-}>("/api/user/commitments");
 
 export const GetEddsaAccountPubKey = get<{},
   string[]
