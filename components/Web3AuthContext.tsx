@@ -8,6 +8,7 @@ import { ethers } from 'ethers';
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { CommonPrivateKeyProvider } from "@web3auth/base-provider";
 import { set } from "react-hook-form";
+import { GetDataToSign } from "@/utils/APIs";
 
 const web3AuthConfig: Web3AuthConfig = {
     txServiceUrl: 'https://safe-transaction-goerli.safe.global'
@@ -19,7 +20,7 @@ const web3AuthConfig: Web3AuthConfig = {
 interface Web3AuthContextType {
     address: string,
     login: () => void,
-    sign: (message: string) => void
+    sign: (message: string) => string
 }
 
 export const Web3AuthContext = createContext({} as Web3AuthContextType);
@@ -95,17 +96,20 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
             // const address = '0x7FD69E691F8b8f7Fa416CDCaFD41eDB32E0Eb3c8'
             const res = await signer.signMessage(message)
             console.log(res)
+            return res
         } catch (error) {
             console.log(error)
+            return "error"
         }
 
-    }, [])
+    }, [web3authPack])
 
     const login = useCallback(async () => {
         const data = await web3authPack?.signIn()
         console.log({ data })
+        if (!data?.eoa) return
+        // const signData = await GetDataToSign({ address: data?.eoa, type: "login" })
         setAddress(data?.eoa)
-        // console.log("hi~", data);
     }, [web3authPack]);
     useEffect(() => {
         async () => {

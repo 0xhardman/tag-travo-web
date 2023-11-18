@@ -1,3 +1,5 @@
+import { DefaultTokenType } from "@/utils/AuthUtils"
+
 export interface Tag {
     id: number,
     tag: string,
@@ -11,3 +13,5 @@ export interface LayoutNavigator {
     path: string,
     name: string
 }
+
+export type SignType = typeof DefaultTokenType | "bind" | "scan" | "zkproof" | "mint"
