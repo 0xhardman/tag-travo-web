@@ -1,81 +1,73 @@
 import clsx from "clsx";
 import Arrow from "./Arrow";
 import { useEffect, useState } from "react";
-import { Dialog, DialogTitle, DialogContent, Paper, DialogContentText, DialogActions, Button, TableContainer, Table, TableHead, TableCell, TableRow, TableBody } from "@mui/material";
-import { Tag } from "@/type";
-import { useContractReads, erc20ABI } from 'wagmi'
+import { Dialog, DialogTitle, DialogContent, Paper, DialogContentText, DialogActions, Button, TableContainer, Table, TableHead, TableCell, TableRow, TableBody, Checkbox } from "@mui/material";
+// import { Tag } from "@/type";
 import { dataSwapContract } from "@/contracts/dataSwapContract";
-import { formatEther } from "viem";
+import { formatEther, parseEther } from "viem";
+import { GetTags, Tag } from "@/utils/APIs";
+import { readContract } from '@wagmi/core'
 
 
-export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag, setTag: React.Dispatch<React.SetStateAction<Tag>> }) {
+export default function Pay({ payUSD, selectTags, setSelectTags }: { payUSD: number, selectTags: Tag[], setSelectTags: (tags: Tag[]) => void }) {
     const [open, setOpen] = useState(false)
-    const [rows, setRows] = useState<Tag[]>([])
-
+    const [price, setPrice] = useState(0)
+    // const [rows, setRows] = useState<Tag[]>([])
+    const [tags, setTags] = useState<Tag[]>([])
+    // const [selectTags, setSelectTags] = useState<Tag[]>([])
     const handleClose = () => {
         setOpen(false)
     }
     const handleOpen = () => {
         setOpen(true)
     }
-    function createData(
-        id: number,
-        tag: string,
-        description: string,
-        count: number,
-        price: number,
-    ) {
-        return { id, tag, description, count, price };
+    function getRandomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-    const ids = [7074046504243040256, 7086575438692093952, 7093087508845563904, 7098147946901803008]
-    const tags = [{
-        id: 7074046504243040256,
-        tag: 'Uniswap master',
-        description: 'Interacted with Uniswap protocol for more than 10 times before 1st Nov.',
-        count: 111234,
-    },
-    {
-        id: 7086575438692093952,
-        tag: 'DeFi follower on X',
-        description: 'Linked at least 1 post about opBNB before 1st Nov.',
-        count: 2507,
-    },
-    {
-        id: 7093087508845563904,
-        tag: 'opBNB player',
-        description: 'Hold at least 1 BNB on opBNB chain before 1st Nov.',
-        count: 712401,
-    }, {
-        id: 7098147946901803008,
-        tag: 'Uniswap Discord Member',
-        description: 'Being a member of Uniswap discord before 1st Nov.',
-        count: 123408,
-    }]
-    const { data, isError, isLoading, error } = useContractReads({
-        contracts: tags.map((item) => {
-            return {
-                ...dataSwapContract as any,
-                functionName: 'tagPrices',
-                args: [item.id],
-            }
-        })
-    })
 
     useEffect(() => {
-        if (isError) {
-            console.log(error)
-            return
-        }
-        if (data?.length || 0 > 0) {
-            console.log(data)
-        } else {
-            return
-        }
-        const temp = data?.map((item, index) => {
-            return createData(tags[index].id, tags[index].tag, tags[index].description, tags[index].count, Number(formatEther(item?.result as any || 0)))
-        })
-        setRows(temp as Tag[])
-    }, [data, isError])
+        (async () => {
+            const allTags = await GetTags({})
+            console.log(allTags)
+            setTags(allTags)
+        })()
+    }, [])
+    useEffect(() => {
+        (async () => {
+            const sortedIds = tags.map((tag) => parseInt(tag.id)).sort()
+            const key = await readContract({
+                ...dataSwapContract as any,
+                functionName: 'getKey',
+                args: [sortedIds],
+            })
+            let max = BigInt(0)
+            await Promise.all(selectTags.map(async (tag) => {
+                const price = await readContract({
+                    ...dataSwapContract as any,
+                    functionName: 'tagPrices',
+                    args: [tag.id],
+                }) as bigint
+                if (price > max) max = price
+            }))
+
+            setPrice(Number(formatEther(max)))
+        })()
+    }, [selectTags])
+    // useEffect(() => {
+    //     if (isError) {
+    //         console.log(error)
+    //         return
+    //     }
+    //     if (data?.length || 0 > 0) {
+    //         console.log(data)
+    //     } else {
+    //         return
+    //     }
+    //     const temp = data?.map((item, index) => {
+    //         return createData(tags[index].id, tags[index].tag, tags[index].description, tags[index].count, Number(formatEther(item?.result as any || 0)))
+    //     })
+    //     setRows(temp as Tag[])
+    // }, [data, isError])
     return <>
         <Dialog
             open={open}
@@ -94,30 +86,31 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
                                 <TableCell align="center">Tag</TableCell>
                                 <TableCell align="center">Description</TableCell>
                                 <TableCell align="center">Count</TableCell>
-                                <TableCell align="center">Price<br />(BNB/Mail)</TableCell>
-                                <TableCell align="center">Action</TableCell>
+                                <TableCell align="center">Select</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.map((row) => (
+                            {tags.map((row) => (
                                 <TableRow
-                                    key={row.tag}
+                                    key={row.id}
                                     sx={{
                                         cursor: 'pointer',
                                         '&:last-child td, &:last-child th': { border: 0 }
                                     }}
                                 >
                                     <TableCell align="center">
-                                        {row.tag}
+                                        {row.name}
                                     </TableCell>
                                     <TableCell align="center">{row.description}</TableCell>
-                                    <TableCell align="center">{row.count}</TableCell>
-                                    <TableCell align="center">{row.price}</TableCell>
+                                    <TableCell align="center">100</TableCell>
                                     <TableCell align="center">
-                                        <Button onClick={() => {
-                                            setTag(row)
-                                            setOpen(false)
-                                        }}>Select</Button>
+                                        <Checkbox checked={!!selectTags.find((tag) => tag.id == row.id)} onClick={() => {
+                                            if (selectTags.find((tag) => tag.id == row.id)) {
+                                                setSelectTags(selectTags.filter((tag) => tag.id != row.id))
+                                            } else {
+                                                setSelectTags([...selectTags, row])
+                                            }
+                                        }} />
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -125,6 +118,11 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
                     </Table>
                 </TableContainer>
             </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose} autoFocus>
+                    Confirm
+                </Button>
+            </DialogActions>
         </Dialog >
         <div className={clsx('flex flex-col',
             'h-[12opx] p-[16px]',
@@ -133,13 +131,15 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
         )}>
             <div>You Receive</div>
             <div className='flex justify-between items-center'>
-                <div className='text-[36px]'>{(payUSD / (tag?.price as number)).toFixed(0) || 0}</div>
-                {<div onClick={handleOpen} className='px-[12px] cursor-pointer flex justify-start items-center shadow-md bg-[#1f7f94] text-white gap-1  h-[34px] rounded-full text-[20px]'>
-                    {tag?.tag == '' ? <>
+                <div className='text-[36px]'>{(payUSD / (price)).toFixed(0) || 0}</div>
+                {<div onClick={handleOpen} className=' px-[12px] cursor-pointer flex justify-start items-center shadow-md bg-[#1f7f94] text-white gap-1  h-[34px] rounded-full text-[20px]'>
+                    {selectTags.length == 0 ? <>
                         Select Tag
                         <Arrow color="white" />
                     </> : <>
-                        {tag?.tag}
+                        {selectTags.map((tag) => {
+                            return tag.name
+                        }).join(',').slice(0, 10) + '...' + selectTags.length + ' tags'}
                     </>}
                 </div>
                 }
@@ -150,7 +150,7 @@ export default function Pay({ payUSD, tag, setTag }: { payUSD: number, tag: Tag,
 
                 </div>
                 <div className='flex gap-2 justify-end'>
-                    <div>Total: {tag?.count} User Data</div>
+                    <div>Total: xxx User Data</div>
                 </div>
             </div>
         </div>

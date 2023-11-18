@@ -10,7 +10,7 @@ export default function Tip({ tag }: { tag: Tag }) {
         <div className='text-black'>
             {
                 tag.tag == '' ? 'Please Select Tag' : <>
-                    1  <span className="text-[#fbb636]">tBNB</span> can send {tag.count} users with <span className='border bg-[#008093] p-[4px] rounded-lg text-white'>{tag?.tag}</span> {(1 / tag.price).toFixed(0)} times mails.</>
+                    1  <span className="text-[#4b85e5]">ETH</span> can send {tag.count} users with <span className='border bg-[#008093] p-[4px] rounded-lg text-white'>{tag?.tag}</span> {(1 / tag.price).toFixed(0)} times mails.</>
             }
         </div>
     </div>

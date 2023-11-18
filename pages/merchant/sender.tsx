@@ -2,8 +2,8 @@ import Image from 'next/image'
 import { Albert_Sans } from 'next/font/google'
 import clsx from 'clsx'
 import Arrow from '@/components/Arrow'
-import { useEffect, useState } from 'react'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { useContext, useEffect, useState } from 'react'
+import { GetBuyRecord, GetTags } from '@/utils/APIs'
 import { dataSwapContract } from "@/contracts/dataSwapContract";
 import { Tag } from '@/type'
 import Layout from '@/components/Layout'
@@ -13,6 +13,7 @@ import { useRouter } from 'next/router'
 import { useForm, Controller } from 'react-hook-form'
 import { useAccount, useContractReads, useContractWrite } from 'wagmi'
 import { merchantTotal } from '@/constrants'
+import { Web3AuthContext } from '@/components/Web3AuthContext'
 
 const inter = Albert_Sans({ subsets: ['latin'] })
 
@@ -33,23 +34,19 @@ function Label({ required, value }: { required: boolean, value: string }) {
   );
 }
 
+interface Option {
+  key: string;
+  tagIds: string[];
+  count: number;
+  name: string;
+}
 export default function Sender() {
   const { address } = useAccount()
   const { data: writeData, isLoading: isWriteLoading, isSuccess, writeAsync } = useContractWrite({
     ...dataSwapContract as any,
     functionName: 'send',
   })
-  const ids = [7074046504243040256, 7086575438692093952, 7093087508845563904, 7098147946901803008]
-  const { data, isError, isLoading } = useContractReads({
-    contracts: ids.map((id, index) => {
-      return {
-        ...dataSwapContract as any,
-        functionName: 'buyRecords',
-        args: [address, id],
-      }
-    })
 
-  })
   const {
     handleSubmit,
     control,
@@ -69,38 +66,40 @@ export default function Sender() {
   const [open, setOpen] = useState(false);
   const [disabletSubmitBtn, setDisableSubmitBtn] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
-  const [options, setOptions] = useState<Tag[]>([]);
-  const tags = [{
-    id: 7074046504243040256,
-    tag: 'Uniswap master',
-    description: 'Interacted with Uniswap protocol for more than 10 times before 1st Nov.',
-    count: 111234,
-  },
-  {
-    id: 7086575438692093952,
-    tag: 'DeFi follower on X',
-    description: 'Linked at least 1 post about opBNB before 1st Nov.',
-    count: 2507,
-  },
-  {
-    id: 7093087508845563904,
-    tag: 'opBNB player',
-    description: 'Hold at least 1 BNB on opBNB chain before 1st Nov.',
-    count: 712401,
-  }, {
-    id: 7098147946901803008,
-    tag: 'Uniswap Discord Member',
-    description: 'Being a member of Uniswap discord before 1st Nov.',
-    count: 123408,
-  }]
+  const [options, setOptions] = useState<Option[]>([]);
+
+  // useEffect(() => {
+  //   if (data) {
+  //     const temp = data?.map((item, index) => {
+  //       return { id: ids[index], balance: data[index].result, tag: tags[index].tag, total: tags[index].count }
+  //     })
+  //     setOptions(temp as any)
+  //   }
+  // }, [data])
   useEffect(() => {
-    if (data) {
-      const temp = data?.map((item, index) => {
-        return { id: ids[index], balance: data[index].result, tag: tags[index].tag, total: tags[index].count }
+    (async () => {
+      const data = await GetBuyRecord({ address })
+      const tags = await GetTags({})
+      console.log({ data })
+      const res = data.keyCounts.map((i) => {
+        const tmp = tags.filter((tag) => {
+          const e = i.tagIds.includes(tag.id)
+          console.log(e)
+          return e
+        }
+        )
+        return {
+          key: i.key,
+          tagIds: i.tagIds,
+          count: i.count,
+          name: tmp.map((j) => j.name).join('&'),
+        }
+
       })
-      setOptions(temp as any)
-    }
-  }, [data])
+      setOptions(res)
+      console.log(res)
+    })()
+  }, [address])
   const loading = open && options.length === 0;
 
   return (
@@ -216,13 +215,13 @@ export default function Sender() {
                             setOpen(false);
                           }}
                           isOptionEqualToValue={(option, kvalue) => {
-                            return option.tag === kvalue.tag;
+                            return option.name === kvalue.name;
                           }}
                           getOptionLabel={(option) => {
-                            return 'For ' + option.tag + ' users You have ' + option?.balance + ' times mail send access';
+                            return 'For ' + option.name + ' users You have ' + option?.count + ' times mail send access';
                           }}
                           onChange={(e, value) => {
-                            onChange(value?.id);
+                            onChange(value.key);
                           }}
                           onBlur={onBlur}
                           options={options}
