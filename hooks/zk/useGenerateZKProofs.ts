@@ -206,7 +206,7 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
         await PushMintCommitment({ signInfo, commitment });
 
       const tokenIdStr = await getContract("ZKProfile", "ZKProfileProxy").methods
-        .getTokenIdByAddress({ owner: destination }).call();
+        .getTokenIdByAddress({ _owner: destination }).call();
       const tokenIdHex = BigNumber.from(tokenIdStr).toHexString().slice(2).padStart(20, "0");
 
       const destSecretInfo: SecretInfo = {
