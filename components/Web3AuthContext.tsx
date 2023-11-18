@@ -21,8 +21,8 @@ import { Tag } from "@/utils/APIs";
 import { StringUtils } from "@/utils/StringUtils";
 import { SignType } from "@/type";
 import { useRouter } from "next/router";
-import {useGenerateZKProofs} from "@/hooks/zk/useGenerateZKProofs";
-import {SignInfo} from "@/hooks/useSign";
+import { useGenerateZKProofs } from "@/hooks/zk/useGenerateZKProofs";
+import { SignInfo } from "@/hooks/useSign";
 const web3AuthConfig: Web3AuthConfig = {
     txServiceUrl: 'https://safe-transaction-goerli.safe.global'
 }
@@ -42,6 +42,7 @@ interface Web3AuthContextType {
     user: User,
     setUser: (user: User) => void,
     tags: Tag[],
+    setTags: (tags: Tag[]) => void,
     handleSign: (type?: SignType) => void
 }
 
@@ -249,7 +250,7 @@ export const Web3AuthContextProvider = ({ children }: { children: React.ReactNod
         setOpen(true)
     }, [message])
     return <Web3AuthContext.Provider value={{
-        address, aaSignIn, login, sign, web3BioRelations, setWeb3BioRelations, relations, setRelations, user, setUser, tags, handleSign
+        address, aaSignIn, login, sign, web3BioRelations, setWeb3BioRelations, relations, setRelations, user, setUser, tags, handleSign, setTags
     }}>
         <Dialog
             open={open}
