@@ -5,7 +5,7 @@ import { Dialog, DialogTitle, DialogContent, Paper, DialogContentText, DialogAct
 // import { Tag } from "@/type";
 import { dataSwapContract } from "@/contracts/dataSwapContract";
 import { formatEther, parseEther } from "viem";
-import { GetTags, Tag } from "@/utils/APIs";
+import {GetTagCounts, GetTags, Tag} from "@/utils/APIs";
 import { readContract } from '@wagmi/core'
 
 
@@ -14,6 +14,7 @@ export default function Pay({ payUSD, selectTags, setSelectTags }: { payUSD: num
     const [price, setPrice] = useState(0)
     // const [rows, setRows] = useState<Tag[]>([])
     const [tags, setTags] = useState<Tag[]>([])
+    const [tagCounts, setTagCounts] = useState({})
     // const [selectTags, setSelectTags] = useState<Tag[]>([])
     const handleClose = () => {
         setOpen(false)
@@ -27,9 +28,11 @@ export default function Pay({ payUSD, selectTags, setSelectTags }: { payUSD: num
 
     useEffect(() => {
         (async () => {
-            const allTags = await GetTags({})
+            const allTags = await GetTags()
+            const tagCounts = await GetTagCounts()
             console.log(allTags)
             setTags(allTags)
+            setTagCounts(tagCounts)
         })()
     }, [])
     useEffect(() => {
@@ -102,7 +105,7 @@ export default function Pay({ payUSD, selectTags, setSelectTags }: { payUSD: num
                                         {row.name}
                                     </TableCell>
                                     <TableCell align="center">{row.description}</TableCell>
-                                    <TableCell align="center">100</TableCell>
+                                    <TableCell align="center">{tagCounts[row.id] || 0}</TableCell>
                                     <TableCell align="center">
                                         <Checkbox checked={!!selectTags.find((tag) => tag.id == row.id)} onClick={() => {
                                             if (selectTags.find((tag) => tag.id == row.id)) {
@@ -150,7 +153,7 @@ export default function Pay({ payUSD, selectTags, setSelectTags }: { payUSD: num
 
                 </div>
                 <div className='flex gap-2 justify-end'>
-                    <div>Total: xxx User Data</div>
+                    <div>Total: {Math.min(...selectTags.map(t => tagCounts[t.id] || 0))} User Data</div>
                 </div>
             </div>
         </div>
