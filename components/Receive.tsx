@@ -150,7 +150,7 @@ export default function Pay({ payUSD, selectTags, setSelectTags }: { payUSD: num
 
                 </div>
                 <div className='flex gap-2 justify-end'>
-                    <div>Total: xxx User Data</div>
+                    <div>Total: {100} User Data</div>
                 </div>
             </div>
         </div>
