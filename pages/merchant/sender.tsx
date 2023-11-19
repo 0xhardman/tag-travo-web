@@ -107,9 +107,9 @@ export default function Sender() {
       <main
         className={`flex min-h-[calc(100vh-70px)] flex-col items-center justify-start p-24 ${inter.className} bg-[#fffeff]`}
       >
-        <Typography variant='h3' fontWeight='600' color={"#008093"}>Sender</Typography>
-        <Typography align='center' variant='h5' color="gray" mb={2}>Hi! Data consumer!<br />
-          Define your target users, and approach them!</Typography>
+        <Typography variant='h3' fontWeight='600' color={"#008093"}>Message Sender</Typography>
+        <Typography align='center' variant='h5' color="gray" mb={2}> Write a message to the users of your selected tag. <br />
+          The message can be personal since the content is targeting specific users.</Typography>
         <div className={clsx('flex relative flex-col gap-[6px]',
           'w-[862px]  px-[28px] py-[12px]',
           'bg-white border-[#22222243] border rounded-[24px]',
@@ -277,6 +277,6 @@ export default function Sender() {
           </div>
         </div>
       </main>
-    </Layout>
+    </Layout >
   )
 }
