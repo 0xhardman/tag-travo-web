@@ -2,6 +2,7 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import '@rainbow-me/rainbowkit/styles.css';
 import { Chain } from '@wagmi/core'
+import Head from 'next/head'
 import {
   getDefaultWallets,
   RainbowKitProvider,
@@ -65,6 +66,11 @@ export default function App({ Component, pageProps }: AppProps) {
   return <WagmiConfig config={wagmiConfig}>
     <RainbowKitProvider chains={chains}>
       <Web3AuthContextProvider>
+        <Head >
+          <title>Tag Trove</title>
+          <link rel="icon" href="/favicon.ico" />
+          <meta name="description" content='Transitioning Web2 user data to Web3 through a user-centric privacy preserving marketing channel' />
+        </Head>
         <Component {...pageProps} />
       </Web3AuthContextProvider>
     </RainbowKitProvider>
