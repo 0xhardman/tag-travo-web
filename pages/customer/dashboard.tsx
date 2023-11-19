@@ -1,3 +1,4 @@
+
 import { useContext } from 'react';
 import { customerTotal } from '@/constrants';
 import { Albert_Sans } from 'next/font/google';
@@ -7,6 +8,9 @@ import { useRouter } from 'next/router';
 import { Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import clsx from 'clsx';
+import { useAccount, useSignMessage } from 'wagmi';
+import MyButton from '@/components/MyButton'
+
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
@@ -16,32 +20,20 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 // Instantiate and initialize the pack
 
-const MyButton = ({ children, onClick }: { children: React.ReactNode, onClick: () => void }) => {
-    return <div onClick={onClick} className='cursor-pointer self-end w-[140px] rounded-[18px] bg-[#1f7f94] text-[20px] text-white h-[58px] flex justify-center items-center'>
-        {children}
-    </div>
-}
 const inter = Albert_Sans({ subsets: ['latin'] })
 export default function Test() {
-    const { login, address } = useContext(Web3AuthContext)
+    const { user } = useContext(Web3AuthContext)
+    const { address } = useAccount()
+    const { signMessageAsync } = useSignMessage()
     const router = useRouter()
-    // useEffect(() => {
-    //     console.log({ address })
-    //     if (!address) {
-    //         localStorage.clear();
-    //         router.push('login')
-    //         return
-    //     }
-    // }, [address])
-    const data = ["Addr: Uniswap Master", "Addr: Scroll User", "Github: Solidity Dev", "X: FinTech FinTech FinTech", "World Coin human"]
-    const tmpAddress = "0xb15115A15d5992A756D003AE74C0b832918fAb75"
+
+
     return <CustomerLayout current='Dashboard' total={customerTotal} hideConnectWallet={true}>
         <main
             className={`flex min-h-[calc(100vh-70px)] flex-col items-center justify-start py-10 px-24 ${inter.className} bg-[#fffeff]`}
         >
-            <Typography variant='h3' fontWeight='600' color={"#008093"}>Dashboard</Typography>
-            <Typography align='center' variant='h5' color="gray" mb={2}>Hi! Data Provider!<br />
-                Define your target users, and approach them!</Typography>
+            <Typography mb={4} variant='h3' fontWeight='600' color={"#008093"}>Dashboard</Typography>
+
             <div className={clsx('flex  gap-[6px]',
                 'w-[1362px]  px-[28px] py-[24px]',
                 'bg-white border-[#22222243] border rounded-[24px]',
@@ -59,15 +51,15 @@ export default function Test() {
                             <Typography variant='h4' fontWeight='600' color={"#008093"}>Your AA address:</Typography>
                         </div>
                         <div className='flex text-[20px] justify-between rounded-lg border p-2 mb-[10px]'>
-                            <div>{address || tmpAddress}</div>
+                            <div>{user.mintAddress}</div>
                             <img width={15} height={15} src="/copy.svg" alt="" />
                         </div>
                         <div className='mb-2'>
-                            <Typography variant='h6'> <span className='font-bold text-[#008093]'>Balance: </span>{(12312).toFixed(2)} USDT</Typography>
+                            <Typography variant='h6'> <span className='font-bold text-[#008093]'>Balance: </span>{(0).toFixed(2)} USDT</Typography>
                         </div>
-                        <div className='flex justify-between items-center'>
+                        <div className='flex justify-between items-center mb-5'>
                             <Typography variant='h4' fontWeight='600' color={"#008093"}>History:</Typography>
-
+                            <MyButton onClick={() => {router.push('/subscribe') }}>Subscribe</MyButton>
                         </div>
                         <div className='flex flex-col gap-1 min-h-[300px]'>
                             <div className='flex justify-between text-[#008093] font-bold'>
