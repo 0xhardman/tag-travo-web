@@ -108,7 +108,8 @@ export default function Test() {
             return
         }
 
-    })
+    }).filter((value) => typeof value != "undefined")
+    const total = dataUsages.reduce((a, b) => a + (b?.reward || 0), 0)
     console.log(dataUsages)
     return <CustomerLayout current='Dashboard' total={customerTotal} hideConnectWallet={true}>
         <main
@@ -137,7 +138,7 @@ export default function Test() {
                             <img width={15} height={15} src="/copy.svg" alt="" />
                         </div>
                         <div className='mb-2'>
-                            <Typography variant='h6'> <span className='font-bold text-[#008093]'>Balance: </span>{(0).toFixed(2)} USDT</Typography>
+                            <Typography variant='h6'> <span className='font-bold text-[#008093]'>Balance: </span>{total} USDT</Typography>
                         </div>
                         <div className='flex justify-between items-center mb-5'>
                             <Typography variant='h4' fontWeight='600' color={"#008093"}>History:</Typography>
@@ -154,7 +155,7 @@ export default function Test() {
                                 <div className='w-[80px]'>Reward</div>
                             </div>
                             <div className='border'></div>
-                            {dataUsages.filter((value) => typeof value != "undefined").map((value, index) => {
+                            {dataUsages.map((value, index) => {
                                 return <div key={index} className='flex justify-between border-b'>
                                     <div className='flex items-center w-[100px]'>{value?.time}</div>
                                     <div className='flex items-center w-[210px]'>{value?.tag}</div>
