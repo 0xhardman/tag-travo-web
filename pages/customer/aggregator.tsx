@@ -175,7 +175,7 @@ export default function Test() {
 
                         </div>
                         <div className='flex justify-between items-center py-2 mt-2'>
-                            <Typography variant='h4' fontWeight='600' color={"#008093"}>Associate Web2 Account:</Typography>
+                            <Typography variant='h4' fontWeight='600' color={"#008093"}>Associated Web2 Accounts:</Typography>
                         </div>
                         <div className='flex flex-wrap justify-start gap-x-5 gap-y-2 py-4'>
                             {web3BioRelations.map((value, index) => {
@@ -272,7 +272,7 @@ export default function Test() {
                         }
                     </div>
                     <MyButton onClick={() => { handleSign("zkproof") }}>
-                        Encrypt
+                        Confirm
                     </MyButton>
                 </div>
             </div>

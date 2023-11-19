@@ -79,7 +79,7 @@ export default function Pay({ payUSD, selectTags, setSelectTags }: { payUSD: num
             aria-describedby="alert-dialog-description"
         >
             <DialogTitle id="alert-dialog-title">
-                Hi! May I ask where we can upload the materials?
+            Which tags would you like to send messages to?
             </DialogTitle>
             <DialogContent>
                 <TableContainer component={Paper}>

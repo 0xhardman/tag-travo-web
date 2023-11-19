@@ -22,16 +22,16 @@ export default function App() {
     const { openConnectModal } = useConnectModal()
 
     // Initialize the Web3Inbox SDK
-    const isReady = true
-    // const isReady = useInitWeb3InboxClient({
-    //     // The project ID and domain you setup in the Domain Setup section
-    //     projectId: '8e679bafa7f56ef5cbe81fb58f206ff3',
-    //     domain: 'tag-trove.vercel.app',
+    // const isReady = true
+    const isReady = useInitWeb3InboxClient({
+        // The project ID and domain you setup in the Domain Setup section
+        projectId: '8e679bafa7f56ef5cbe81fb58f206ff3',
+        domain: 'tag-trove.vercel.app',
 
-    //     // Allow localhost development with "unlimited" mode.
-    //     // This authorizes this dapp to control notification subscriptions for all domains (including `app.example.com`), not just `window.location.host`
-    //     isLimited: false
-    // })
+        // Allow localhost development with "unlimited" mode.
+        // This authorizes this dapp to control notification subscriptions for all domains (including `app.example.com`), not just `window.location.host`
+        isLimited: false
+    })
 
     const { account, setAccount, isRegistered, isRegistering, register } = useW3iAccount()
     useEffect(() => {

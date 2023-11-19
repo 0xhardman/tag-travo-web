@@ -31,7 +31,8 @@ export default function Test() {
         >
 
             <div className='flex flex-col justify-center items-center gap-2'>
-                <Typography variant='h1' fontWeight={600} color="#008192">Hi Anon!</Typography>
+                <Typography variant='h1' fontWeight={600} color="#008192">Welcome!</Typography>
+                <Typography align='center' variant='h5' color="gray" mb={2}>Sign in with your Google account, email or Web3 address. </Typography>
                 <Typography variant='h4' fontWeight={600} color="#008192">{address}</Typography>
                 <Button onClick={() => { aaSignIn() }} fullWidth variant='outlined' size='large'>Login with SAFE AA Auth Kit</Button>
                 <Button onClick={() => { handleSign() }} fullWidth variant='outlined' size='large'>Sign In</Button>
