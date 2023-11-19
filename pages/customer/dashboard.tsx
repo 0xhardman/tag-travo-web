@@ -1,5 +1,5 @@
 
-import { useContext } from 'react';
+import {useCallback, useContext, useEffect} from 'react';
 import { customerTotal } from '@/constrants';
 import { Albert_Sans } from 'next/font/google';
 import CustomerLayout from '@/components/CustomerLayout';
@@ -10,6 +10,14 @@ import { styled } from '@mui/material/styles';
 import clsx from 'clsx';
 import { useAccount, useSignMessage } from 'wagmi';
 import MyButton from '@/components/MyButton'
+import {
+    useManageSubscription,
+    useSubscription,
+    useW3iAccount,
+    useInitWeb3InboxClient,
+    useMessages
+} from '@web3inbox/widget-react'
+import {useConnectModal} from "@rainbow-me/rainbowkit";
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -23,10 +31,76 @@ const Item = styled(Paper)(({ theme }) => ({
 const inter = Albert_Sans({ subsets: ['latin'] })
 export default function Test() {
     const { user } = useContext(Web3AuthContext)
-    const { address } = useAccount()
-    const { signMessageAsync } = useSignMessage()
+    // const { address } = useAccount()
+    // const { signMessageAsync } = useSignMessage()
     const router = useRouter()
 
+    // const { openConnectModal } = useConnectModal()
+    //
+    // // Initialize the Web3Inbox SDK
+    // const isReady = true
+    // // const isReady = useInitWeb3InboxClient({
+    // //     // The project ID and domain you setup in the Domain Setup section
+    // //     projectId: '8e679bafa7f56ef5cbe81fb58f206ff3',
+    // //     domain: 'tag-trove.vercel.app',
+    //
+    // //     // Allow localhost development with "unlimited" mode.
+    // //     // This authorizes this dapp to control notification subscriptions for all domains (including `app.example.com`), not just `window.location.host`
+    // //     isLimited: false
+    // // })
+    //
+    // const { account, setAccount, isRegistered, isRegistering, register } = useW3iAccount()
+    // useEffect(() => {
+    //     if (!address) return
+    //     // Convert the address into a CAIP-10 blockchain-agnostic account ID and update the Web3Inbox SDK with it
+    //     setAccount(`eip155:1:${address}`)
+    // }, [address, setAccount])
+    //
+    // // In order to authorize the dapp to control subscriptions, the user needs to sign a SIWE message which happens automatically when `register()` is called.
+    // // Depending on the configuration of `domain` and `isLimited`, a different message is generated.
+    // const performRegistration = useCallback(async () => {
+    //     if (!address) return
+    //     try {
+    //         await register(message => signMessageAsync({ message }))
+    //     } catch (registerIdentityError) {
+    //         alert(registerIdentityError)
+    //     }
+    // }, [signMessageAsync, register, address])
+    //
+    // useEffect(() => {
+    //     // Register even if an identity key exists, to account for stale keys
+    //     performRegistration()
+    // }, [performRegistration])
+    //
+    // const { isSubscribed, isSubscribing, subscribe } = useManageSubscription()
+    //
+    // const performSubscribe = useCallback(async () => {
+    //     // Register again just in case
+    //     await performRegistration()
+    //     await subscribe()
+    // }, [subscribe, isRegistered])
+    //
+    // const { subscription } = useSubscription()
+    const { messages } = useMessages()
+    const dataUsages = messages.map((m: {
+        "id": number,
+        "topic": string,
+        "message": {
+            "id": string,
+            "type": string,
+            "title": string,
+            "body": string,
+            "icon": string,
+            "url": string
+        },
+        "publishedAt": number
+    }) => {
+        const data = JSON.parse(m.message.body) as { tag: string, app?: string, action?: string, reward?: number }
+        return {
+            time: new Date(m.publishedAt).toLocaleString(),
+            app: m.message.title, ...data
+        }
+    })
 
     return <CustomerLayout current='Dashboard' total={customerTotal} hideConnectWallet={true}>
         <main
@@ -60,6 +134,8 @@ export default function Test() {
                         <div className='flex justify-between items-center mb-5'>
                             <Typography variant='h4' fontWeight='600' color={"#008093"}>History:</Typography>
                             <MyButton onClick={() => {router.push('/subscribe') }}>Subscribe</MyButton>
+
+                            {/*<MyButton onClick={() => { openConnectModal?.() }}>Subscribe</MyButton>*/}
                         </div>
                         <div className='flex flex-col gap-1 min-h-[300px]'>
                             <div className='flex justify-between text-[#008093] font-bold'>
@@ -70,13 +146,13 @@ export default function Test() {
                                 <div className='w-[80px]'>Reward</div>
                             </div>
                             <div className='border'></div>
-                            {[{ time: "2022/11/11 22:22:12", tag: "all", app: "data2cash", action: "onboard", raward: '$1.0' }].map((value, index) => {
+                            {dataUsages.map((value, index) => {
                                 return <div key={index} className='flex justify-between'>
                                     <div className='flex items-center w-[140px]'>{value.time}</div>
                                     <div className='flex items-center w-[80px]'>{value.tag}</div>
                                     <div className='flex items-center w-[80px]'>{value.app}</div>
                                     <div className='flex items-center w-[80px]'>{value.action}</div>
-                                    <div className='flex items-center w-[80px]'>{value.raward}</div>
+                                    <div className='flex items-center w-[80px]'>${value.reward.toFixed(2)}</div>
                                 </div>
                             }, [])}
                         </div>

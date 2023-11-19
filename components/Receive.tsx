@@ -144,8 +144,7 @@ export default function Pay({ payUSD, selectTags, setSelectTags }: { payUSD: num
                             return tag.name
                         }).join(',').slice(0, 10) + '...' + selectTags.length + ' tags'}
                     </>}
-                </div>
-                }
+                </div>}
 
             </div>
             <div className='flex gap-2 justify-between'>
