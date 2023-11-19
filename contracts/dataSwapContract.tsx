@@ -1,5 +1,5 @@
 import DataSwapABI from '@/abi/DataSwapABI.json'
 export const dataSwapContract = {
-    address: '0xE77F33c3b19d564c3B3463657596bEE1fc7E4C69',
+    address: '0xB53249B13Ac1552CdBc530Ef8c2fb7348Aa388ca',
     abi: DataSwapABI,
 }
