@@ -138,7 +138,7 @@ export default function Test() {
                             <img width={15} height={15} src="/copy.svg" alt="" />
                         </div>
                         <div className='mb-2'>
-                            <Typography variant='h6'> <span className='font-bold text-[#008093]'>Balance: </span>{total} USDT</Typography>
+                            <Typography variant='h6'> <span className='font-bold text-[#008093]'>Balance: </span>{total.toFixed(2)} USDT</Typography>
                         </div>
                         <div className='flex justify-between items-center mb-5'>
                             <Typography variant='h4' fontWeight='600' color={"#008093"}>History:</Typography>
