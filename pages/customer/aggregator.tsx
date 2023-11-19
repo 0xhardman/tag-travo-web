@@ -13,6 +13,7 @@ import { useAccount, useConnect, useDisconnect, useSignMessage } from 'wagmi'
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { BindAddress, GetDataToSign, Tag, VerifySign } from '@/utils/APIs';
 import { StringUtils } from '@/utils/StringUtils';
+import MyButton from '@/components/MyButton'
 // import { signMessage } from 'viem/accounts';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -24,11 +25,11 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 // Instantiate and initialize the pack
 
-const MyButton = ({ children, onClick }: { children: React.ReactNode, onClick: () => void }) => {
-    return <div onClick={onClick} className='cursor-pointer self-end w-[140px] rounded-[18px] bg-[#1f7f94] text-[20px] text-white h-[58px] flex justify-center items-center'>
-        {children}
-    </div>
-}
+// const MyButton = ({ children, onClick }: { children: React.ReactNode, onClick: () => void }) => {
+//     return <div onClick={onClick} className='cursor-pointer self-end w-[140px] rounded-[18px] bg-[#1f7f94] text-[20px] text-white h-[58px] flex justify-center items-center'>
+//         {children}
+//     </div>
+// }
 const inter = Albert_Sans({ subsets: ['latin'] })
 export default function Test() {
     const { handleSign } = useContext(Web3AuthContext)
