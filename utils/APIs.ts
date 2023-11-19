@@ -93,6 +93,8 @@ export const Login = authPost<{}, NewUserRelation>("/api/user/login");
 
 export const GetTags = get<{}, Tag[]>("/api/tag/tags"); // 定义路由
 
+export const GetTagCounts = get<{}, {[K: string]: number}>("/api/tag/counts"); // 定义路由
+
 /**
  * Request
  */
