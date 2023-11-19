@@ -15,8 +15,9 @@ import {useState} from "react";
 import {useChainId} from "wagmi";
 import {MathUtils} from "@/utils/MathUtils";
 import {getLocalStorage, getOrSetLocalStorage} from "@/utils/StorageUtils";
-import {BigNumber} from "ethers";
+import {BigNumber, ethers} from "ethers";
 import {removeDuplicates} from "@/utils/ArrayUtils";
+import {ethereum} from "@/utils/web3/ETHInstance";
 
 export const PushCommitment = authPut<{
   relationType: RelationType,
@@ -74,9 +75,18 @@ async function getRidsTree(tag: Tag) {
   // rids = rids.map(rid => ethers.utils.keccak256(
   //   ethers.utils.toUtf8Bytes(rid.toLowerCase())
   // ).slice(0, 42));
+
+  const web3 = ethereum().web3
   rids = rids
-    .filter(rid => rid.split(':')[0] == "0")
-    .map(rid => rid.split(':')[1]);
+    .map(rid => rid.split(':'))
+    .map(([type, id]) => type == "0" ? id.toLowerCase() :
+      web3.eth.accounts.privateKeyToAccount(
+        ethers.utils.keccak256(ethers.utils.toUtf8Bytes(id.toLowerCase()))
+      ).address.toLowerCase()
+    );
+  // rids = rids
+  //   .filter(rid => rid.split(':')[0] == "0")
+  //   .map(rid => rid.split(':')[1]);
 
   const ridsTreeData = {}
   for (const rid of rids) ridsTreeData[rid] = 1;
@@ -243,14 +253,14 @@ export function useGenerateZKProofs(user: User, relations: Relation[]) {
         relations, tagState, relationTags, scannedTags, getSecretInfo
       });
 
-      nonZKTagIds = [
-        ...nonZKTagIds, ...relationTags
-          .filter(([r, _]) => r.type != RelationType.Address)
-          .map(([, ts]) => ts).flat().map(t => t.id)
-      ]
+      // nonZKTagIds = [
+      //   ...nonZKTagIds, ...relationTags
+      //     // .filter(([r, _]) => r.type != RelationType.Address)
+      //     .map(([, ts]) => ts).flat().map(t => t.id)
+      // ]
 
       const tasks = relationTags
-        .filter(([r, _]) => r.type == RelationType.Address)
+        // .filter(([r, _]) => r.type == RelationType.Address)
         .map(([r, ts]) =>
           ts.map(t => [t, getSecretInfo(r)] as [Tag, SecretInfo])
         ).flat() as [Tag, SecretInfo][]
@@ -336,9 +346,16 @@ type SecretInfo = {
 
 function getSecretInfo(relation: Relation) {
   // const rid = `${relation.type}:${relation.id.toLowerCase()}`
+
+  const web3 = ethereum().web3
+  const identifier = relation.type == RelationType.Address ?
+    relation.id.toLowerCase() :
+    web3.eth.accounts.privateKeyToAccount(
+      ethers.utils.keccak256(ethers.utils.toUtf8Bytes(relation.id.toLowerCase()))
+    ).address.toLowerCase()
   return {
     // identifier: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(rid)).slice(0, 42),
-    identifier: relation.id,
+    identifier, //: relation.id,
     secret: relation.secret,
     commitmentReceipt: relation.commitmentReceipt
   } as SecretInfo
